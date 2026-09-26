@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snack Roster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEBDD;
+    --paper-raise:#FBF8EE;
+    --chalk-green:#2E4A3B;
+    --chalk-green-dark:#20342A;
+    --mustard:#E0A526;
+    --coral:#DD5B4A;
+    --ink:#26302A;
+    --ink-soft:#5C6960;
+    --line: rgba(38,48,42,0.14);
+    --pin:#B23A2E;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(38,48,42,0.06) 1px, transparent 0);
+    background-size: 14px 14px;
+    font-family:'Work Sans',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  #app{
+    width:100%;
+    max-width:440px;
+    min-height:100vh;
+    background:transparent;
+    padding:14px 14px 40px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',sans-serif; margin:0;}
+  .top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .brand{display:flex; align-items:center; gap:8px;}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--pin); box-shadow:0 0 0 3px rgba(178,58,46,0.15);}
+  .brand h1{font-size:20px; color:var(--chalk-green-dark); font-weight:700;}
+  .role-toggle{
+    display:flex;
+    background:var(--paper-raise);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:3px;
+    gap:2px;
+  }
+  .role-toggle button{
+    border:none;
+    background:transparent;
+    font-family:'Work Sans',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    padding:6px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .role-toggle button.active{
+    background:var(--chalk-green);
+    color:#fff;
+  }
+  .card{
+    background:var(--paper-raise);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:12px;
+  }
+  select{
+    width:100%;
+    font-family:'Work Sans',sans-serif;
+    font-size:14px;
+    padding:9px 10px;
+    border-radius:9px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+  }
+  label.small{font-size:12px; color:var(--ink-soft); font-weight:600; display:block; margin-bottom:5px;}
+  .tabs{display:flex; gap:6px; overflow-x:auto; margin-bottom:12px; padding-bottom:2px;}
+  .tabs button{
+    flex:0 0 auto;
+    border:1px solid var(--line);
+    background:var(--paper-raise);
+    padding:7px 13px;
+    border-radius:999px;
+    font-family:'Work Sans',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .tabs button.active{
+    background:var(--mustard);
+    color:var(--chalk-green-dark);
+    border-color:var(--mustard);
+  }
+  .banner{
+    background:#FCEFD9;
+    border:1px solid #EAD7A8;
+    border-radius:12px;
+    padding:10px 12px;
+    font-size:13px;
+    margin-bottom:12px;
+    color:#7A5A16;
+    font-weight:500;
+  }
+  .banner.ok{background:#E7F0E5;border-color:#C8DCC4;color:#31502B;}
+  .slot{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:11px 12px;
+    margin-bottom:8px;
+    background:var(--paper-raise);
+  }
+  .slot.mine{border-color:var(--chalk-green); background:#EEF4EE;}
+  .slot .date{
+    font-weight:700;
+    font-size:14px;
+    width:52px;
+    color:var(--chalk-green-dark);
+  }
+  .slot .info{flex:1; padding:0 8px;}
+  .slot .info .name{font-size:13.5px; font-weight:600;}
+  .slot .info .item{font-size:12px; color:var(--ink-soft);}
+  .chip{
+    font-size:11px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .chip.open{background:#E4EFE0; color:#3E6B34;}
+  .chip.filled{background:#EFE6D6; color:#8A6A1F;}
+  .chip.mine{background:var(--chalk-green); color:#fff;}
+  .btn{
+    border:none;
+    border-radius:9px;
+    padding:8px 12px;
+    font-family:'Work Sans',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--chalk-green); color:#fff;}
+  .btn-secondary{background:transparent; border:1px solid var(--line); color:var(--ink);}
+  .btn-coral{background:var(--coral); color:#fff;}
+  .btn-block{width:100%;}
+  .btn-sm{padding:6px 9px; font-size:11.5px;}
+  .modal-bg{
+    position:fixed; inset:0; background:rgba(32,52,42,0.45);
+    display:flex; align-items:flex-end; justify-content:center; z-index:50;
+  }
+  .modal{
+    background:var(--paper-raise);
+    width:100%; max-width:440px;
+    border-radius:18px 18px 0 0;
+    padding:18px 16px 22px;
+  }
+  .modal h3{font-size:17px; margin-bottom:10px; color:var(--chalk-green-dark);}
+  .row{display:flex; gap:8px; margin-top:12px;}
+  .stat-row{display:flex; gap:8px; margin-bottom:12px;}
+  .stat{
+    flex:1;
+    background:var(--paper-raise);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px;
+    text-align:center;
+  }
+  .stat .num{font-family:'Baloo 2'; font-size:20px; color:var(--chalk-green-dark); font-weight:700;}
+  .stat .lbl{font-size:11px; color:var(--ink-soft); font-weight:600;}
+  .defaulter{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 0; border-bottom:1px solid var(--line); font-size:13px;
+  }
+  .defaulter:last-child{border-bottom:none;}
+  .menu-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:7px 0; border-bottom:1px solid var(--line); font-size:13.5px;
+  }
+  .menu-item:last-child{border-bottom:none;}
+  .add-row{display:flex; gap:6px; margin-top:10px;}
+  input[type=text], input[type=date]{
+    width:100%;
+    font-family:'Work Sans',sans-serif;
+    font-size:13.5px;
+    padding:8px 9px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:#fff;
+  }
+  .section-title{font-size:14px; font-weight:700; color:var(--chalk-green-dark); margin-bottom:9px;}
+  .swap-req{
+    border:1px solid var(--line); border-radius:11px; padding:9px 10px; margin-bottom:8px; font-size:12.5px; background:#fff;
+  }
+  .muted{color:var(--ink-soft); font-size:12px;}
+  .empty{text-align:center; color:var(--ink-soft); font-size:13px; padding:16px 0;}
+</style>
+</head>
+<body>
+<div id="app"><div class="empty">Loading roster…</div></div>
+
+<script>
+const STORAGE_KEY = 'snack-roster-state-v1';
+const MONTH_LABEL = 'September 2026';
+const YEAR = 2026, MONTH = 9; // 1-indexed
+
+let state = null;
+let ui = {
+  role: 'parent',
+  parentId: null,
+  section: null,
+  adminTab: 'overview',
+};
+
+function weekdaysOfMonth(year, month){
+  const dates = [];
+  const d = new Date(year, month-1, 1);
+  while(d.getMonth() === month-1){
+    const day = d.getDay();
+    if(day !== 0 && day !== 6){
+      dates.push(fmtDate(d));
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return dates;
+}
+function fmtDate(d){
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function dispDate(iso){
+  const d = new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('en-US',{month:'short', day:'numeric'});
+}
+function weekday(iso){
+  const d = new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('en-US',{weekday:'short'});
+}
+
+function seedState(){
+  const sections = ['Env-1','Elementary','Env-2'];
+  const menu = ['Banana Muffins','Fruit Skewers','Cheese & Crackers','Veggie Sticks & Hummus','Mini Sandwiches','Popcorn','Yogurt Cups','Granola Bars','Apple Slices & PB','Trail Mix'];
+  const parents = [
+    {id:'p1', name:'Priya Nair'},
+    {id:'p2', name:'Rahul Mehta'},
+    {id:'p3', name:'Sara Khan'},
+    {id:'p4', name:'Tom Fischer'},
+    {id:'p5', name:'Meera Iyer'},
+  ];
+  const children = [
+    {id:'c1', name:'Aarav', parentId:'p1', section:'Env-1'},
+    {id:'c2', name:'Diya', parentId:'p1', section:'Env-1'},
+    {id:'c3', name:'Kabir', parentId:'p2', section:'Elementary'},
+    {id:'c4', name:'Zoya', parentId:'p3', section:'Env-2'},
+    {id:'c5', name:'Imran', parentId:'p3', section:'Elementary'},
+    {id:'c6', name:'Leo', parentId:'p4', section:'Env-1'},
+    {id:'c7', name:'Nina', parentId:'p5', section:'Env-2'},
+  ];
+  const blackouts = [];
+  const slots = {};
+  sections.forEach(sec => {
+    const dates = weekdaysOfMonth(YEAR, MONTH);
+    slots[sec] = {};
+    dates.forEach(dt => { slots[sec][dt] = null; });
+  });
+  // seed a few filled slots
+  const wk = weekdaysOfMonth(YEAR, MONTH);
+  function fill(sec, idx, childId, item){
+    const dt = wk[idx];
+    const child = children.find(c=>c.id===childId);
+    slots[sec][dt] = { childId, childName: child.name, parentId: child.parentId, parentName: parents.find(p=>p.id===child.parentId).name, menuItem: item };
+  }
+  fill('Env-1', 0, 'c1', menu[0]);
+  fill('Env-1', 2, 'c6', menu[3]);
+  fill('Elementary', 1, 'c3', menu[5]);
+  fill('Env-2', 0, 'c4', menu[7]);
+  fill('Env-2', 3, 'c7', menu[2]);
+
+  return {
+    sections, menu, sectionMenuOverride: {}, parents, children, blackouts, slots,
+    swapRequests: [],
+  };
+}
+
+async function loadState(){
+  // Static mock data — held in memory only, resets on page reload.
+  state = seedState();
+}
+async function saveState(){
+  // No-op: this standalone copy uses static mock data and doesn't persist changes.
+}
+
+function activeMenuFor(section){
+  return (state.sectionMenuOverride[section] && state.sectionMenuOverride[section].length) ? state.sectionMenuOverride[section] : state.menu;
+}
+function childrenOf(parentId){
+  return state.children.filter(c=>c.parentId===parentId);
+}
+function sectionsOf(parentId){
+  return [...new Set(childrenOf(parentId).map(c=>c.section))];
+}
+function hasSignedUp(parentId, section){
+  const dates = Object.keys(state.slots[section]);
+  return dates.some(dt => state.slots[section][dt] && state.slots[section][dt].parentId === parentId);
+}
+
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  app.appendChild(renderTop());
+  if(ui.role === 'parent') app.appendChild(renderParent());
+  else app.appendChild(renderAdmin());
+}
+
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html !== undefined) e.innerHTML = html;
+  return e;
+}
+
+function renderTop(){
+  const top = el('div','top');
+  const brand = el('div','brand', `<span class="dot"></span><h1>Snack Roster</h1>`);
+  const toggle = el('div','role-toggle');
+  const pBtn = el('button', ui.role==='parent'?'active':'', 'Parent');
+  const aBtn = el('button', ui.role==='admin'?'active':'', 'Admin');
+  pBtn.onclick = ()=>{ ui.role='parent'; render(); };
+  aBtn.onclick = ()=>{ ui.role='admin'; render(); };
+  toggle.append(pBtn, aBtn);
+  top.append(brand, toggle);
+  return top;
+}
+
+/* ---------------- PARENT VIEW ---------------- */
+function renderParent(){
+  const wrap = el('div');
+
+  // parent selector
+  const card = el('div','card');
+  card.appendChild(el('label','small','Signed in as'));
+  const sel = document.createElement('select');
+  state.parents.forEach(p=>{
+    const o = document.createElement('option');
+    o.value = p.id; o.textContent = p.name;
+    if(p.id === ui.parentId) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.onchange = (e)=>{ ui.parentId = e.target.value; ui.section = null; render(); };
+  card.appendChild(sel);
+  wrap.appendChild(card);
+
+  if(!ui.parentId){ ui.parentId = state.parents[0].id; }
+  const mySections = sectionsOf(ui.parentId);
+  if(!ui.section || !state.sections.includes(ui.section)) ui.section = mySections[0] || state.sections[0];
+
+  // section tabs (all sections; mine highlighted, others read-only)
+  const tabs = el('div','tabs');
+  state.sections.forEach(sec=>{
+    const b = el('button', sec===ui.section?'active':'', sec + (mySections.includes(sec)?'':' 👁'));
+    b.onclick = ()=>{ ui.section = sec; render(); };
+    tabs.appendChild(b);
+  });
+  wrap.appendChild(tabs);
+
+  const isMySection = mySections.includes(ui.section);
+  if(isMySection){
+    const signedUp = hasSignedUp(ui.parentId, ui.section);
+    const banner = el('div', 'banner ' + (signedUp?'ok':''), signedUp
+      ? `You're all set for ${ui.section} this month ✓`
+      : `You haven't signed up for ${ui.section} yet this month — pick an open date below.`);
+    wrap.appendChild(banner);
+  } else {
+    wrap.appendChild(el('div','banner','Read-only view — your child isn\'t in this section.'));
+  }
+
+  // swap requests incoming
+  const incoming = state.swapRequests.filter(r => r.status==='pending' && r.toParentId === ui.parentId);
+  if(incoming.length){
+    const swapCard = el('div','card');
+    swapCard.appendChild(el('div','section-title','Swap requests for you'));
+    incoming.forEach(r=>{
+      const child = state.children.find(c=>c.id===r.requesterChildId);
+      const box = el('div','swap-req', `<b>${state.parents.find(p=>p.id===r.requesterParentId).name}</b> wants your <b>${dispDate(r.targetDate)}</b> slot in ${r.section}, offering their <b>${dispDate(r.offerDate)}</b> slot.`);
+      const row = el('div','row');
+      const acc = el('button','btn btn-primary btn-sm','Accept');
+      const dec = el('button','btn btn-secondary btn-sm','Decline');
+      acc.onclick = ()=> resolveSwap(r.id, true);
+      dec.onclick = ()=> resolveSwap(r.id, false);
+      row.append(acc, dec);
+      swapCard.append(box, row);
+    });
+    wrap.appendChild(swapCard);
+  }
+
+  // slot list
+  const listCard = el('div','card');
+  listCard.appendChild(el('div','section-title', `${ui.section} — ${MONTH_LABEL}`));
+  const dates = Object.keys(state.slots[ui.section]).sort();
+  dates.forEach(dt=>{
+    const slot = state.slots[ui.section][dt];
+    const row = el('div','slot' + (slot && slot.parentId===ui.parentId ? ' mine':''));
+    const dateBox = el('div','date', `${weekday(dt)}<br>${dispDate(dt)}`);
+    const info = el('div','info');
+    if(slot){
+      info.innerHTML = `<div class="name">${slot.childName}</div><div class="item">${slot.menuItem}</div>`;
+    } else {
+      info.innerHTML = `<div class="muted">Open slot</div>`;
+    }
+    row.append(dateBox, info);
+
+    if(!isMySection){
+      const chip = el('span','chip ' + (slot?'filled':'open'), slot?'Filled':'Open');
+      row.appendChild(chip);
+    } else if(!slot){
+      const btn = el('button','btn btn-primary btn-sm','Sign up');
+      btn.onclick = ()=> openSignupModal(ui.section, dt);
+      row.appendChild(btn);
+    } else if(slot.parentId === ui.parentId){
+      const btn = el('button','btn btn-secondary btn-sm','Edit / Cancel');
+      btn.onclick = ()=> openEditModal(ui.section, dt);
+      row.appendChild(btn);
+    } else {
+      const btn = el('button','btn btn-secondary btn-sm','Request swap');
+      btn.onclick = ()=> openSwapModal(ui.section, dt);
+      row.appendChild(btn);
+    }
+    listCard.appendChild(row);
+  });
+  wrap.appendChild(listCard);
+
+  return wrap;
+}
+
+function openSignupModal(section, date){
+  const kids = childrenOf(ui.parentId).filter(c=>c.section===section);
+  const menu = activeMenuFor(section);
+  showModal(`Sign up — ${dispDate(date)}`, (body)=>{
+    body.appendChild(el('label','small','Child'));
+    const childSel = document.createElement('select');
+    kids.forEach(k=>{ const o=document.createElement('option'); o.value=k.id; o.textContent=k.name; childSel.appendChild(o); });
+    body.appendChild(childSel);
+    body.appendChild(el('label','small','Snack item'));
+    const menuSel = document.createElement('select');
+    menu.forEach(m=>{ const o=document.createElement('option'); o.value=m; o.textContent=m; menuSel.appendChild(o); });
+    body.appendChild(menuSel);
+    const row = el('div','row');
+    const confirm = el('button','btn btn-primary btn-block','Confirm sign-up');
+    confirm.onclick = async ()=>{
+      const child = state.children.find(c=>c.id===childSel.value);
+      state.slots[section][date] = { childId: child.id, childName: child.name, parentId: ui.parentId, parentName: state.parents.find(p=>p.id===ui.parentId).name, menuItem: menuSel.value };
+      await saveState(); closeModal(); render();
+    };
+    row.appendChild(confirm);
+    body.appendChild(row);
+  });
+}
+function openEditModal(section, date){
+  const slot = state.slots[section][date];
+  const menu = activeMenuFor(section);
+  showModal(`Edit — ${dispDate(date)}`, (body)=>{
+    body.appendChild(el('label','small','Snack item'));
+    const menuSel = document.createElement('select');
+    menu.forEach(m=>{ const o=document.createElement('option'); o.value=m; o.textContent=m; if(m===slot.menuItem) o.selected=true; menuSel.appendChild(o); });
+    body.appendChild(menuSel);
+    const row = el('div','row');
+    const save = el('button','btn btn-primary','Save');
+    const cancel = el('button','btn btn-coral','Cancel sign-up');
+    save.onclick = async ()=>{ slot.menuItem = menuSel.value; await saveState(); closeModal(); render(); };
+    cancel.onclick = async ()=>{ state.slots[section][date] = null; await saveState(); closeModal(); render(); };
+    row.append(save, cancel);
+    body.appendChild(row);
+  });
+}
+function openSwapModal(section, targetDate){
+  const mySlots = Object.keys(state.slots[section]).filter(dt => state.slots[section][dt] && state.slots[section][dt].parentId===ui.parentId);
+  if(!mySlots.length){
+    showModal('Request swap', (body)=>{
+      body.appendChild(el('div','muted','You need a signed-up slot in this section before you can offer a swap.'));
+    });
+    return;
+  }
+  showModal(`Request swap for ${dispDate(targetDate)}`, (body)=>{
+    body.appendChild(el('label','small','Offer one of your slots'));
+    const sel = document.createElement('select');
+    mySlots.forEach(dt=>{ const o=document.createElement('option'); o.value=dt; o.textContent=dispDate(dt); sel.appendChild(o); });
+    body.appendChild(sel);
+    const row = el('div','row');
+    const send = el('button','btn btn-primary btn-block','Send request');
+    send.onclick = async ()=>{
+      const target = state.slots[section][targetDate];
+      state.swapRequests.push({
+        id: 'r'+Date.now(), section, targetDate, offerDate: sel.value,
+        requesterParentId: ui.parentId, requesterChildId: state.children.find(c=>c.parentId===ui.parentId && c.section===section).id,
+        toParentId: target.parentId, status: 'pending'
+      });
+      await saveState(); closeModal(); render();
+    };
+    row.appendChild(send);
+    body.appendChild(row);
+  });
+}
+async function resolveSwap(id, accept){
+  const r = state.swapRequests.find(x=>x.id===id);
+  if(accept){
+    const sec = r.section;
+    const a = state.slots[sec][r.targetDate]; // belongs to toParent
+    const b = state.slots[sec][r.offerDate]; // belongs to requester
+    state.slots[sec][r.targetDate] = b;
+    state.slots[sec][r.offerDate] = a;
+    r.status = 'accepted';
+  } else {
+    r.status = 'declined';
+  }
+  await saveState(); render();
+}
+
+/* ---------------- ADMIN VIEW ---------------- */
+function renderAdmin(){
+  const wrap = el('div');
+  const tabs = el('div','tabs');
+  ['overview','defaulters','menu','roster','blackouts'].forEach(t=>{
+    const label = {overview:'Overview', defaulters:'Defaulters', menu:'Menu', roster:'Roster', blackouts:'Blackout days'}[t];
+    const b = el('button', ui.adminTab===t?'active':'', label);
+    b.onclick = ()=>{ ui.adminTab = t; render(); };
+    tabs.appendChild(b);
+  });
+  wrap.appendChild(tabs);
+
+  if(ui.adminTab==='overview') wrap.appendChild(adminOverview());
+  else if(ui.adminTab==='defaulters') wrap.appendChild(adminDefaulters());
+  else if(ui.adminTab==='menu') wrap.appendChild(adminMenu());
+  else if(ui.adminTab==='roster') wrap.appendChild(adminRoster());
+  else if(ui.adminTab==='blackouts') wrap.appendChild(adminBlackouts());
+  return wrap;
+}
+
+function adminOverview(){
+  const wrap = el('div');
+  const stats = el('div','stat-row');
+  state.sections.forEach(sec=>{
+    const dates = Object.keys(state.slots[sec]);
+    const filled = dates.filter(dt=>state.slots[sec][dt]).length;
+    const s = el('div','stat', `<div class="num">${filled}/${dates.length}</div><div class="lbl">${sec}</div>`);
+    stats.appendChild(s);
+  });
+  wrap.appendChild(stats);
+  const card = el('div','card');
+  card.appendChild(el('div','section-title', `Schedule auto-generated for ${MONTH_LABEL}`));
+  card.appendChild(el('div','muted', `Weekdays only. ${state.blackouts.length} blackout day(s) excluded. No manual drafting needed.`));
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function adminDefaulters(){
+  const wrap = el('div');
+  const card = el('div','card');
+  card.appendChild(el('div','section-title','Not yet signed up this month'));
+  let any = false;
+  state.parents.forEach(p=>{
+    sectionsOf(p.id).forEach(sec=>{
+      if(!hasSignedUp(p.id, sec)){
+        any = true;
+        card.appendChild(el('div','defaulter', `<span>${p.name}</span><span class="chip open">${sec}</span>`));
+      }
+    });
+  });
+  if(!any) card.appendChild(el('div','empty','Everyone is signed up 🎉'));
+  wrap.appendChild(card);
+  wrap.appendChild(el('div','banner','Reminders: daily from 5 days before month start, continuing 3 days into the month. After that, parents land here for manual follow-up.'));
+  return wrap;
+}
+
+function adminMenu(){
+  const wrap = el('div');
+  const card = el('div','card');
+  card.appendChild(el('div','section-title','Global default menu'));
+  state.menu.forEach((m,i)=>{
+    const row = el('div','menu-item');
+    row.appendChild(el('span','',m));
+    const del = el('button','btn btn-secondary btn-sm','Remove');
+    del.onclick = async ()=>{ state.menu.splice(i,1); await saveState(); render(); };
+    row.appendChild(del);
+    card.appendChild(row);
+  });
+  const addRow = el('div','add-row');
+  const input = document.createElement('input'); input.type='text'; input.placeholder='New snack item';
+  const addBtn = el('button','btn btn-primary btn-sm','Add');
+  addBtn.onclick = async ()=>{
+    if(input.value.trim()){ state.menu.push(input.value.trim()); input.value=''; await saveState(); render(); }
+  };
+  addRow.append(input, addBtn);
+  card.appendChild(addRow);
+  wrap.appendChild(card);
+  wrap.appendChild(el('div','banner','Sections without a custom menu automatically inherit this global list.'));
+  return wrap;
+}
+
+function adminRoster(){
+  const wrap = el('div');
+  state.sections.forEach(sec=>{
+    const card = el('div','card');
+    card.appendChild(el('div','section-title', sec));
+    const kids = state.children.filter(c=>c.section===sec);
+    kids.forEach(k=>{
+      const parent = state.parents.find(p=>p.id===k.parentId);
+      card.appendChild(el('div','menu-item', `<span>${k.name}</span><span class="muted">${parent.name}</span>`));
+    });
+    wrap.appendChild(card);
+  });
+  wrap.appendChild(el('div','banner','Roster supports CSV bulk import or manual add/edit in the full build.'));
+  return wrap;
+}
+
+function adminBlackouts(){
+  const wrap = el('div');
+  const card = el('div','card');
+  card.appendChild(el('div','section-title','Ad-hoc blackout days'));
+  if(!state.blackouts.length) card.appendChild(el('div','empty','No blackout days added yet.'));
+  state.blackouts.forEach((b,i)=>{
+    const row = el('div','menu-item');
+    row.appendChild(el('span','', dispDate(b)));
+    const del = el('button','btn btn-secondary btn-sm','Remove');
+    del.onclick = async ()=>{
+      state.blackouts.splice(i,1);
+      state.sections.forEach(sec=>{ if(!(b in state.slots[sec])) state.slots[sec][b] = null; });
+      await saveState(); render();
+    };
+    row.appendChild(del);
+    card.appendChild(row);
+  });
+  const addRow = el('div','add-row');
+  const input = document.createElement('input'); input.type='date';
+  const addBtn = el('button','btn btn-primary btn-sm','Add');
+  addBtn.onclick = async ()=>{
+    if(!input.value) return;
+    state.blackouts.push(input.value);
+    state.sections.forEach(sec=>{ delete state.slots[sec][input.value]; });
+    await saveState(); render();
+  };
+  addRow.append(input, addBtn);
+  card.appendChild(addRow);
+  wrap.appendChild(card);
+  wrap.appendChild(el('div','banner','Blackout days close sign-ups for that date across all sections, on top of the academic-year holiday calendar.'));
+  return wrap;
+}
+
+/* ---------------- modal ---------------- */
+function showModal(title, buildBody){
+  const bg = el('div','modal-bg');
+  const modal = el('div','modal');
+  modal.appendChild(el('h3','',title));
+  const body = el('div','');
+  buildBody(body);
+  modal.appendChild(body);
+  const close = el('button','btn btn-secondary btn-block', 'Close');
+  close.style.marginTop = '10px';
+  close.onclick = closeModal;
+  modal.appendChild(close);
+  bg.appendChild(modal);
+  bg.id = 'modal-bg';
+  bg.onclick = (e)=>{ if(e.target.id==='modal-bg') closeModal(); };
+  document.body.appendChild(bg);
+}
+function closeModal(){
+  const bg = document.getElementById('modal-bg');
+  if(bg) bg.remove();
+}
+
+(async function init(){
+  await loadState();
+  render();
+})();
+</script>
+</body>
+</html>

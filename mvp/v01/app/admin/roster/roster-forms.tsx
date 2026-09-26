@@ -1,0 +1,159 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { addChildManual, linkParentToChild, importRosterCsv } from "@/lib/admin-actions";
+
+export default function RosterForms({
+  sections,
+  children,
+}: {
+  sections: { id: string; name: string }[];
+  children: { id: string; name: string; section_id: string; sections: { name: string } | null }[];
+}) {
+  const [pending, startTransition] = useTransition();
+  const [childName, setChildName] = useState("");
+  const [childSection, setChildSection] = useState(sections[0]?.id ?? "");
+  const [linkPhone, setLinkPhone] = useState("");
+  const [linkChildId, setLinkChildId] = useState(children[0]?.id ?? "");
+  const [csvLog, setCsvLog] = useState<string[] | null>(null);
+  const [linkError, setLinkError] = useState<string | null>(null);
+
+  function handleCsvUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = String(reader.result);
+      const lines = text.trim().split("\n");
+      const [header, ...rows] = lines;
+      const cols = header.split(",").map((c) => c.trim().toLowerCase());
+      const childIdx = cols.indexOf("child_name");
+      const sectionIdx = cols.indexOf("section_name");
+      const phoneIdx = cols.indexOf("parent_phone");
+      if (childIdx === -1 || sectionIdx === -1 || phoneIdx === -1) {
+        setCsvLog(["CSV must have headers: child_name, section_name, parent_phone"]);
+        return;
+      }
+      const parsed = rows
+        .filter(Boolean)
+        .map((line) => {
+          const cells = line.split(",").map((c) => c.trim());
+          return {
+            child_name: cells[childIdx],
+            section_name: cells[sectionIdx],
+            parent_phone: cells[phoneIdx],
+          };
+        });
+      startTransition(async () => {
+        const res = await importRosterCsv(parsed);
+        setCsvLog(res.log ?? ["Import complete."]);
+      });
+    };
+    reader.readAsText(file);
+  }
+
+  return (
+    <div className="space-y-8">
+      <section>
+        <h2 className="font-semibold mb-2">CSV import</h2>
+        <p className="text-xs text-gray-500 mb-2">
+          Columns: child_name, section_name, parent_phone. Parents must have
+          logged in at least once (via OTP) for the link to resolve — the
+          import will note any that need to be re-linked later.
+        </p>
+        <input type="file" accept=".csv" onChange={handleCsvUpload} className="text-sm" />
+        {csvLog && (
+          <ul className="text-xs mt-2 space-y-1 text-gray-600">
+            {csvLog.map((l, i) => (
+              <li key={i}>{l}</li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section>
+        <h2 className="font-semibold mb-2">Add child manually</h2>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            startTransition(() => { addChildManual(childName, childSection); });
+            setChildName("");
+          }}
+          className="space-y-2"
+        >
+          <input
+            required
+            value={childName}
+            onChange={(e) => setChildName(e.target.value)}
+            placeholder="Child's name"
+            className="w-full border rounded px-2 py-1 text-sm"
+          />
+          <select
+            value={childSection}
+            onChange={(e) => setChildSection(e.target.value)}
+            className="w-full border rounded px-2 py-1 text-sm"
+          >
+            {sections.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          <button disabled={pending} className="w-full bg-green-800 text-white rounded py-1.5 text-sm">
+            Add child
+          </button>
+        </form>
+      </section>
+
+      <section>
+        <h2 className="font-semibold mb-2">Link parent to child</h2>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setLinkError(null);
+            startTransition(async () => {
+              const res = await linkParentToChild(linkPhone, linkChildId);
+              if (res?.error) setLinkError(res.error);
+            });
+            setLinkPhone("");
+          }}
+          className="space-y-2"
+        >
+          <input
+            required
+            value={linkPhone}
+            onChange={(e) => setLinkPhone(e.target.value)}
+            placeholder="Parent phone (+91XXXXXXXXXX)"
+            className="w-full border rounded px-2 py-1 text-sm"
+          />
+          <select
+            value={linkChildId}
+            onChange={(e) => setLinkChildId(e.target.value)}
+            className="w-full border rounded px-2 py-1 text-sm"
+          >
+            {children.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name} ({c.sections?.name})
+              </option>
+            ))}
+          </select>
+          <button disabled={pending} className="w-full bg-green-800 text-white rounded py-1.5 text-sm">
+            Link
+          </button>
+          {linkError && <p className="text-xs text-red-600">{linkError}</p>}
+        </form>
+      </section>
+
+      <section>
+        <h2 className="font-semibold mb-2">All children ({children.length})</h2>
+        <ul className="text-sm space-y-1 max-h-60 overflow-auto">
+          {children.map((c) => (
+            <li key={c.id} className="border-b py-1">
+              {c.name} — <span className="text-gray-500">{c.sections?.name}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  );
+}
