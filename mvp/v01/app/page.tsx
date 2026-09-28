@@ -1,26 +1,14 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getDb } from "@/lib/db";
 
 export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const db = getDb();
+  const user = await db.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, full_name")
-    .eq("id", user.id)
-    .single();
-
-  const { data: sections } = await supabase
-    .from("sections")
-    .select("id, name")
-    .eq("archived", false)
-    .order("name");
+  const profile = await db.profiles.getById(user.id);
+  const sections = await db.sections.list(false);
 
   return (
     <main className="mx-auto max-w-sm px-4 py-10">
@@ -34,7 +22,7 @@ export default async function Home() {
       </div>
 
       <p className="text-sm text-gray-500 mb-4">
-        {profile?.full_name || user.phone} — pick a section to view its
+        {profile?.fullName || user.phone} — pick a section to view its
         calendar.
       </p>
 

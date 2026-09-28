@@ -1,7 +1,33 @@
+
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getDb } from "@/lib/db";
 import SlotRow from "./slot-row";
+
+type SlotRowSlot = {
+  id: string;
+  date: string;
+  status: "open" | "filled" | "skipped";
+  child_id: string | null;
+  parent_id: string | null;
+  children: { name: string } | null;
+  menu_items: { name: string } | null;
+};
+
+type ChildOption = { id: string; name: string };
+type MenuOption = { id: string; name: string };
+
+function mapToSlotRowSlot(slot: import("@/lib/db/types").SlotWithDetails): SlotRowSlot {
+  return {
+    id: slot.id,
+    date: slot.date,
+    status: slot.status,
+    child_id: slot.childId,
+    parent_id: slot.parentId,
+    children: slot.childName ? { name: slot.childName } : null,
+    menu_items: slot.menuItemName ? { name: slot.menuItemName } : null,
+  };
+}
 
 export default async function SectionPage({
   params,
@@ -9,80 +35,40 @@ export default async function SectionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: sectionId } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const db = getDb();
+  const user = await db.auth.getUser();
   if (!user) redirect("/login");
 
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
 
-  const { data: section } = await supabase
-    .from("sections")
-    .select("id, name")
-    .eq("id", sectionId)
-    .single();
+  const section = await db.sections.getById(sectionId);
+  if (!section) redirect("/");
 
-  const { data: schedule } = await supabase
-    .from("schedules")
-    .select("id")
-    .eq("section_id", sectionId)
-    .eq("year", year)
-    .eq("month", month)
-    .single();
+  const slots = await db.slots.listBySectionAndMonth(sectionId, year, month);
+  const slotRows: SlotRowSlot[] = slots.map(mapToSlotRowSlot);
 
-  const { data: slotsRaw } = schedule
-    ? await supabase
-        .from("slots")
-        .select("id, date, status, child_id, parent_id, menu_item_id, children(name), menu_items(name)")
-        .eq("schedule_id", schedule.id)
-        .order("date")
-    : { data: [] };
-  const slots = (slotsRaw ?? []).map((s: any) => ({
-    ...s,
-    children: Array.isArray(s.children) ? s.children[0] ?? null : s.children,
-    menu_items: Array.isArray(s.menu_items) ? s.menu_items[0] ?? null : s.menu_items,
-  }));
+  const activeMenu = await db.menus.getActiveMenuForSection(sectionId);
+  const menuItems: MenuOption[] = activeMenu?.items.map((item) => ({
+    id: item.id,
+    name: item.name,
+  })) || [];
 
-  // Active menu for this section: override if present, else global.
-  const { data: overrideMenu } = await supabase
-    .from("menus")
-    .select("id")
-    .eq("section_id", sectionId)
-    .maybeSingle();
-  const { data: globalMenu } = await supabase
-    .from("menus")
-    .select("id")
-    .is("section_id", null)
-    .maybeSingle();
-  const menuId = overrideMenu?.id ?? globalMenu?.id;
-  const { data: menuItems } = menuId
-    ? await supabase
-        .from("menu_items")
-        .select("id, name")
-        .eq("menu_id", menuId)
-        .order("position")
-    : { data: [] };
+  // Get children linked to this parent in this section
+  const allChildren = await db.children.listWithSection();
+  const myChildrenInSection: ChildOption[] = allChildren
+    .filter((c) => c.child.sectionId === sectionId)
+    .map((c) => ({ id: c.child.id, name: c.child.name }));
 
-  // This parent's children in this section (for the sign-up dropdown).
-  const { data: myChildren } = await supabase
-    .from("parent_children")
-    .select("children!inner(id, name, section_id)")
-    .eq("parent_id", user.id);
-  const myChildrenInSection = (myChildren ?? [])
-    .map((r: any) => r.children)
-    .filter((c: any) => c.section_id === sectionId);
-
-  const hasSignedUp = (slots ?? []).some((s: any) => s.parent_id === user.id);
+  const hasSignedUp = slots.some((s) => s.parentId === user!.id);
 
   return (
     <main className="mx-auto max-w-sm px-4 py-6">
       <Link href="/" className="text-sm text-gray-500">
         ← All sections
       </Link>
-      <h1 className="text-2xl font-bold mt-1 mb-1">{section?.name}</h1>
+      <h1 className="text-2xl font-bold mt-1 mb-1">{section.name}</h1>
       <p className="text-sm text-gray-500 mb-4">
         {now.toLocaleString("default", { month: "long", year: "numeric" })}
         {!hasSignedUp && (
@@ -90,21 +76,21 @@ export default async function SectionPage({
         )}
       </p>
 
-      {!slots?.length && (
+      {!slots.length && (
         <p className="text-sm text-gray-400">
           No schedule generated for this month yet. Ask admin to generate it.
         </p>
       )}
 
       <ul className="space-y-2">
-        {slots?.map((slot: any) => (
+        {slotRows.map((slot) => (
           <SlotRow
             key={slot.id}
             slot={slot}
             myChildren={myChildrenInSection}
-            menuItems={menuItems ?? []}
-            currentUserId={user.id}
-            allSlots={slots}
+            menuItems={menuItems}
+            currentUserId={user!.id}
+            allSlots={slotRows}
           />
         ))}
       </ul>

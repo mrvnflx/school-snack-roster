@@ -1,91 +1,45 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getDb } from "@/lib/db";
+import type { SlotWithDetails, ChildWithSection } from "@/lib/db/types";
 import GenerateButton from "./generate-button";
 
 export default async function AdminDashboard() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const db = getDb();
+  const user = await db.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  const profile = await db.profiles.getById(user.id);
   if (profile?.role !== "admin") redirect("/");
 
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
 
-  const { data: sections } = await supabase
-    .from("sections")
-    .select("id, name")
-    .eq("archived", false)
-    .order("name");
+  const sections = await db.sections.list();
 
+  // Per-section stats
   const sectionStats = await Promise.all(
-    (sections ?? []).map(async (section) => {
-      const { data: schedule } = await supabase
-        .from("schedules")
-        .select("id")
-        .eq("section_id", section.id)
-        .eq("year", year)
-        .eq("month", month)
-        .maybeSingle();
-
-      if (!schedule) return { ...section, total: 0, filled: 0, generated: false };
-
-      const { data: slots } = await supabase
-        .from("slots")
-        .select("status")
-        .eq("schedule_id", schedule.id);
-
-      const total = slots?.length ?? 0;
-      const filled = slots?.filter((s) => s.status === "filled").length ?? 0;
-      return { ...section, total, filled, generated: true };
+    sections.map(async (section) => {
+      const schedule = await db.schedules.getBySectionYearMonth(section.id, year, month);
+      if (!schedule) {
+        return { id: section.id, name: section.name, total: 0, filled: 0, generated: false };
+      }
+      const slots = await db.slots.listBySchedule(schedule.id);
+      const total = slots.length;
+      const filled = slots.filter((s) => s.status === "filled").length;
+      return { id: section.id, name: section.name, total, filled, generated: true };
     })
   );
 
-  // Defaulter list: parents linked to children in a section who have no
-  // filled slot in that section for the current month, past the grace period.
-  const { data: settings } = await supabase
-    .from("reminder_settings")
-    .select("grace_days_into_month")
-    .eq("id", 1)
-    .single();
-  const graceDays = settings?.grace_days_into_month ?? 3;
-  const pastGrace = now.getDate() > graceDays;
+  // All slots across sections for this month
+  const allSlots = await Promise.all(
+    sections.map((s) => db.slots.listBySectionAndMonth(s.id, year, month))
+  );
+  const flatSlots: SlotWithDetails[] = allSlots.flat();
 
-  let defaulters: { parent: string; section: string }[] = [];
-  if (pastGrace) {
-    const { data: links } = await supabase
-      .from("parent_children")
-      .select("parent_id, children(section_id, name), profiles(full_name, phone)");
-    const { data: allSlots } = await supabase
-      .from("slots")
-      .select("parent_id, section_id")
-      .not("parent_id", "is", null);
-
-    const bySectionParent = new Set(
-      (allSlots ?? []).map((s) => `${s.section_id}:${s.parent_id}`)
-    );
-    const seen = new Set<string>();
-    for (const link of links ?? []) {
-      const sectionId = (link as any).children?.section_id;
-      if (!sectionId) continue;
-      const key = `${sectionId}:${link.parent_id}`;
-      if (bySectionParent.has(key) || seen.has(key)) continue;
-      seen.add(key);
-      const sectionName = sections?.find((s) => s.id === sectionId)?.name ?? "?";
-      const parentLabel =
-        (link as any).profiles?.full_name || (link as any).profiles?.phone || link.parent_id;
-      defaulters.push({ parent: parentLabel, section: sectionName });
-    }
-  }
+  // Defaulter list — parents with children in a section who have no filled slot this month
+  const defaulters = await computeDefaulters(db, sections, flatSlots);
 
   return (
     <main className="mx-auto max-w-sm px-4 py-6">
@@ -127,13 +81,12 @@ export default async function AdminDashboard() {
       </ul>
 
       <h2 className="font-semibold mb-2">Defaulters (past grace window)</h2>
-      {!pastGrace && (
+      {defaulters.length === 0 && (
         <p className="text-xs text-gray-400">
-          Grace window ({graceDays} days into month) hasn't lapsed yet.
+          {flatSlots.length === 0
+            ? "No schedules generated yet."
+            : "Everyone is signed up."}
         </p>
-      )}
-      {pastGrace && defaulters.length === 0 && (
-        <p className="text-xs text-gray-400">No defaulters 🎉</p>
       )}
       <ul className="space-y-1">
         {defaulters.map((d, i) => (
@@ -144,4 +97,43 @@ export default async function AdminDashboard() {
       </ul>
     </main>
   );
+}
+
+async function computeDefaulters(
+  db: ReturnType<typeof getDb>,
+  sections: { id: string; name: string }[],
+  flatSlots: SlotWithDetails[]
+): Promise<{ parent: string; section: string }[]> {
+  // Build a set of parent+section pairs that have at least one filled slot this month
+  const filledBySectionParent = new Set(
+    flatSlots
+      .filter((slot) => slot.parentId !== null)
+      .map((slot) => `${slot.sectionId}:${slot.parentId}`)
+  );
+
+  const defaulters: { parent: string; section: string }[] = [];
+  const seen = new Set<string>();
+
+  // Get all children-with-section and all profiles
+  const childrenWithSection = await db.children.listWithSection();
+  const allProfiles = await db.profiles.listAll();
+
+  for (const { child, sectionName, parentId } of childrenWithSection as ChildWithSection[]) {
+    if (!sectionName) continue;
+    const parent = (parentId ? allProfiles.find((p) => p.id === parentId) : undefined);
+    if (!parent || parent.role !== "parent") continue;
+
+    const key = `${child.sectionId}:${parent.id}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    if (!filledBySectionParent.has(key)) {
+      defaulters.push({
+        parent: parent.fullName ?? parent.phone ?? parent.id,
+        section: sectionName,
+      });
+    }
+  }
+
+  return defaulters;
 }

@@ -10,7 +10,7 @@ export default function SetupForms({
 }: {
   sections: { id: string; name: string }[];
   holidays: { id: string; date: string; name: string }[];
-  blackouts: { id: string; date: string; reason: string; section_id: string | null }[];
+  blackouts: { id: string; date: string; reason: string; sectionId: string | null }[],
 }) {
   const [pending, startTransition] = useTransition();
   const [sectionName, setSectionName] = useState("");
@@ -96,7 +96,7 @@ export default function SetupForms({
         <ul className="text-sm space-y-1 mb-2 max-h-40 overflow-auto">
           {blackouts.map((b) => (
             <li key={b.id} className="border-b py-1">
-              {b.date} — {b.reason} {b.section_id ? "" : "(all sections)"}
+              {b.date} — {b.reason} {b.sectionId ? "" : "(all sections)"}
             </li>
           ))}
         </ul>

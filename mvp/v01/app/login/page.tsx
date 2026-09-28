@@ -2,38 +2,46 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+type LoginFormProps = {
+  isInMemoryMode: boolean;
+};
+
+export function LoginForm({ isInMemoryMode }: LoginFormProps) {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [stage, setStage] = useState<"phone" | "code">("phone");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({ phone });
-    setLoading(false);
-    if (error) return setError(error.message);
+
+    const tidy = phone.replace(/[\s-]/g, "");
+    if (!/^\+?\d{10,15}$/.test(tidy)) {
+      setLoading(false);
+      return setError("Enter a valid phone number (e.g. +919876543210).");
+    }
+
     setStage("code");
+    setLoading(false);
   }
 
   async function verifyCode(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const { error } = await supabase.auth.verifyOtp({
-      phone,
-      token: code,
-      type: "sms",
-    });
+
+    if (code.length < 4) {
+      setLoading(false);
+      return setError("Enter the code you received.");
+    }
+
+    // In-memory mode: accept any non-empty code and redirect.
     setLoading(false);
-    if (error) return setError(error.message);
     router.push("/");
     router.refresh();
   }
@@ -64,9 +72,7 @@ export default function LoginPage() {
 
       {stage === "code" && (
         <form onSubmit={verifyCode} className="space-y-3">
-          <p className="text-sm text-gray-600">
-            Enter the code sent to {phone}.
-          </p>
+          <p className="text-sm text-gray-600">Enter the code sent to {phone}.</p>
           <input
             type="text"
             required
@@ -88,9 +94,9 @@ export default function LoginPage() {
       {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
 
       <p className="text-xs text-gray-400 mt-6">
-        MVP note: no SMS provider is wired up yet. Configure a Test Phone
-        Number in Supabase Auth settings to log in during development —
-        see README.
+        {isInMemoryMode
+          ? "Development mode — any code is accepted."
+          : "MVP note: no SMS provider is wired up yet. Configure a Test Phone Number in Supabase Auth settings to log in during development."}
       </p>
     </main>
   );

@@ -8,7 +8,7 @@ export default function RosterForms({
   children,
 }: {
   sections: { id: string; name: string }[];
-  children: { id: string; name: string; section_id: string; sections: { name: string } | null }[];
+  children: { id: string; name: string; sectionId: string; sectionName: string | null }[],
 }) {
   const [pending, startTransition] = useTransition();
   const [childName, setChildName] = useState("");
@@ -46,7 +46,11 @@ export default function RosterForms({
         });
       startTransition(async () => {
         const res = await importRosterCsv(parsed);
-        setCsvLog(res.log ?? ["Import complete."]);
+        if (res.success && res.data) {
+          setCsvLog(res.data.log ?? ["Import complete."]);
+        } else {
+          setCsvLog([(res as { error: string }).error]);
+        }
       });
     };
     reader.readAsText(file);
@@ -133,7 +137,7 @@ export default function RosterForms({
           >
             {children.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.name} ({c.sections?.name})
+                {c.name} ({c.sectionName ?? "?"})
               </option>
             ))}
           </select>
@@ -149,7 +153,7 @@ export default function RosterForms({
         <ul className="text-sm space-y-1 max-h-60 overflow-auto">
           {children.map((c) => (
             <li key={c.id} className="border-b py-1">
-              {c.name} — <span className="text-gray-500">{c.sections?.name}</span>
+              {c.name} — <span className="text-gray-500">{c.sectionName ?? "?"}</span>
             </li>
           ))}
         </ul>
