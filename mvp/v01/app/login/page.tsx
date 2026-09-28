@@ -3,17 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-type LoginFormProps = {
-  isInMemoryMode: boolean;
-};
-
-export function LoginForm({ isInMemoryMode }: LoginFormProps) {
+export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [stage, setStage] = useState<"phone" | "code">("phone");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const inMemoryMode = typeof window !== "undefined" && !!(window as any).__USE_IN_MEMORY_DB__;
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault();
@@ -94,7 +92,7 @@ export function LoginForm({ isInMemoryMode }: LoginFormProps) {
       {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
 
       <p className="text-xs text-gray-400 mt-6">
-        {isInMemoryMode
+        {inMemoryMode
           ? "Development mode — any code is accepted."
           : "MVP note: no SMS provider is wired up yet. Configure a Test Phone Number in Supabase Auth settings to log in during development."}
       </p>
