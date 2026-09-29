@@ -8,7 +8,7 @@ export default function RosterForms({
   children,
 }: {
   sections: { id: string; name: string }[];
-  children: { id: string; name: string; sectionId: string; sectionName: string | null }[],
+  children: { id: string; name: string; sectionId: string; sectionName: string | null }[];
 }) {
   const [pending, startTransition] = useTransition();
   const [childName, setChildName] = useState("");
@@ -57,60 +57,62 @@ export default function RosterForms({
   }
 
   return (
-    <div className="space-y-8">
-      <section>
-        <h2 className="font-semibold mb-2">CSV import</h2>
-        <p className="text-xs text-gray-500 mb-2">
+    <>
+      <div className="sr-card">
+        <div className="sr-section-title" style={{ marginBottom: 10 }}>CSV import</div>
+        <p className="sr-muted" style={{ marginBottom: 10 }}>
           Columns: child_name, section_name, parent_phone. Parents must have
-          logged in at least once (via OTP) for the link to resolve — the
-          import will note any that need to be re-linked later.
+          logged in at least once (via OTP) for the link to resolve.
         </p>
-        <input type="file" accept=".csv" onChange={handleCsvUpload} className="text-sm" />
+        <input type="file" accept=".csv" onChange={handleCsvUpload} className="sr-input" />
         {csvLog && (
-          <ul className="text-xs mt-2 space-y-1 text-gray-600">
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {csvLog.map((l, i) => (
-              <li key={i}>{l}</li>
+              <li key={i} className="sr-muted" style={{ fontSize: "12px" }}>{l}</li>
             ))}
           </ul>
         )}
-      </section>
+      </div>
 
-      <section>
-        <h2 className="font-semibold mb-2">Add child manually</h2>
+      <div className="sr-card">
+        <div className="sr-section-title" style={{ marginBottom: 10 }}>Add child manually</div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             startTransition(() => { addChildManual(childName, childSection); });
             setChildName("");
           }}
-          className="space-y-2"
         >
           <input
             required
             value={childName}
             onChange={(e) => setChildName(e.target.value)}
             placeholder="Child's name"
-            className="w-full border rounded px-2 py-1 text-sm"
+            className="sr-input"
+            style={{ marginBottom: 8 }}
           />
           <select
             value={childSection}
             onChange={(e) => setChildSection(e.target.value)}
-            className="w-full border rounded px-2 py-1 text-sm"
+            className="sr-select"
+            style={{ marginBottom: 8 }}
           >
             {sections.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
+              <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
-          <button disabled={pending} className="w-full bg-green-800 text-white rounded py-1.5 text-sm">
+          <button
+            type="submit"
+            disabled={pending}
+            className="sr-btn sr-btn-primary sr-btn-block"
+          >
             Add child
           </button>
         </form>
-      </section>
+      </div>
 
-      <section>
-        <h2 className="font-semibold mb-2">Link parent to child</h2>
+      <div className="sr-card">
+        <div className="sr-section-title" style={{ marginBottom: 10 }}>Link parent to child</div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -121,43 +123,51 @@ export default function RosterForms({
             });
             setLinkPhone("");
           }}
-          className="space-y-2"
         >
           <input
             required
             value={linkPhone}
             onChange={(e) => setLinkPhone(e.target.value)}
             placeholder="Parent phone (+91XXXXXXXXXX)"
-            className="w-full border rounded px-2 py-1 text-sm"
+            className="sr-input"
+            style={{ marginBottom: 8 }}
           />
           <select
             value={linkChildId}
             onChange={(e) => setLinkChildId(e.target.value)}
-            className="w-full border rounded px-2 py-1 text-sm"
+            className="sr-select"
+            style={{ marginBottom: 8 }}
           >
             {children.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name} ({c.sectionName ?? "?"})
-              </option>
+              <option key={c.id} value={c.id}>{c.name} ({c.sectionName ?? "?"})</option>
             ))}
           </select>
-          <button disabled={pending} className="w-full bg-green-800 text-white rounded py-1.5 text-sm">
+          <button
+            type="submit"
+            disabled={pending}
+            className="sr-btn sr-btn-primary sr-btn-block"
+          >
             Link
           </button>
-          {linkError && <p className="text-xs text-red-600">{linkError}</p>}
+          {linkError && (
+            <p style={{ color: "var(--coral)", fontSize: "13px", marginTop: 6 }}>{linkError}</p>
+          )}
         </form>
-      </section>
+      </div>
 
-      <section>
-        <h2 className="font-semibold mb-2">All children ({children.length})</h2>
-        <ul className="text-sm space-y-1 max-h-60 overflow-auto">
+      <div className="sr-card">
+        <div className="sr-section-title" style={{ marginBottom: 10 }}>
+          All children ({children.length})
+        </div>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: "240px", overflowY: "auto" }}>
           {children.map((c) => (
-            <li key={c.id} className="border-b py-1">
-              {c.name} — <span className="text-gray-500">{c.sectionName ?? "?"}</span>
+            <li key={c.id} className="sr-defaulter" style={{ borderBottom: "1px solid var(--line)" }}>
+              <span>{c.name}</span>
+              <span className="sr-muted">{c.sectionName ?? "?"}</span>
             </li>
           ))}
         </ul>
-      </section>
-    </div>
+      </div>
+    </>
   );
 }

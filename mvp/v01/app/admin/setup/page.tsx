@@ -16,11 +16,22 @@ export default async function SetupPage() {
   const blackouts = await db.blackouts.list();
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-6">
-      <Link href="/admin" className="text-sm text-gray-500">
-        ← Admin
-      </Link>
-      <h1 className="text-2xl font-bold mt-1 mb-4">Setup</h1>
+    <>
+      <div className="sr-top">
+        <div className="sr-brand">
+          <span className="sr-brand-dot" />
+          <h1>Snack Roster</h1>
+        </div>
+        <Link href="/admin" className="sr-btn-ghost">Admin</Link>
+      </div>
+
+      <div className="sr-tabs" style={{ marginBottom: 0 }}>
+        <Link href="/admin" className="sr-tab" style={{ textDecoration: "none" }}>Overview</Link>
+        <Link href="/admin/roster" className="sr-tab" style={{ textDecoration: "none" }}>Roster</Link>
+        <Link href="/admin/menus" className="sr-tab" style={{ textDecoration: "none" }}>Menu</Link>
+        <Link href="/admin" className="sr-tab" style={{ textDecoration: "none" }}>Defaulters</Link>
+      </div>
+
       <SetupForms
         sections={sections}
         holidays={holidays}
@@ -31,6 +42,6 @@ export default async function SetupPage() {
           sectionId: b.sectionId,
         }))}
       />
-    </main>
+    </>
   );
 }

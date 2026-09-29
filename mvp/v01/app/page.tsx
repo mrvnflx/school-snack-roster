@@ -11,33 +11,51 @@ export default async function Home() {
   const sections = await db.sections.list(false);
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-10">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Snack Roster</h1>
+    <>
+      <div className="sr-top">
+        <div className="sr-brand">
+          <span className="sr-brand-dot" />
+          <h1>Snack Roster</h1>
+        </div>
         {profile?.role === "admin" && (
-          <Link href="/admin" className="text-sm underline text-green-800">
-            Admin
-          </Link>
+          <Link href="/admin" className="sr-btn-ghost">Admin</Link>
         )}
       </div>
 
-      <p className="text-sm text-gray-500 mb-4">
-        {profile?.fullName || user.phone} — pick a section to view its
-        calendar.
+      <p className="sr-muted" style={{ marginBottom: 14 }}>
+        {profile?.fullName || user.phone} — pick a section to view its calendar.
       </p>
 
-      <ul className="space-y-2">
-        {sections?.map((s) => (
-          <li key={s.id}>
-            <Link
-              href={`/section/${s.id}`}
-              className="block border rounded-lg px-4 py-3 hover:bg-gray-50"
-            >
-              {s.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </main>
+      <div className="sr-card">
+        <div className="sr-section-title" style={{ marginBottom: 10 }}>
+          Sections — September 2026
+        </div>
+        <ul className="space-y-2" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {sections?.map((s) => (
+            <li key={s.id}>
+              <Link
+                href={`/section/${s.id}`}
+                className="sr-slot"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <span className="sr-slot-date" style={{ width: "auto", textAlign: "left", fontFamily: "'Work Sans', sans-serif", fontWeight: 600, fontSize: "13.5px" }}>
+                  {s.name}
+                </span>
+                <span className="sr-slot-info">
+                  <span className="sr-muted">View calendar</span>
+                </span>
+                <span className="sr-btn sr-btn-primary sr-btn-sm" style={{ marginLeft: "auto" }}>
+                  Open
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {!sections?.length && (
+        <div className="sr-empty">No sections set up yet.</div>
+      )}
+    </>
   );
 }

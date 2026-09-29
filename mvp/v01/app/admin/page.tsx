@@ -42,60 +42,86 @@ export default async function AdminDashboard() {
   const defaulters = await computeDefaulters(db, sections, flatSlots);
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-6">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Admin</h1>
-        <Link href="/" className="text-sm text-gray-500">
-          Parent view
-        </Link>
+    <>
+      <div className="sr-top">
+        <div className="sr-brand">
+          <span className="sr-brand-dot" />
+          <h1>Snack Roster</h1>
+        </div>
+        <Link href="/" className="sr-btn-ghost">Parent</Link>
       </div>
 
-      <nav className="flex gap-3 text-sm mb-6">
-        <Link href="/admin/setup" className="underline text-green-800">
-          Sections / Holidays / Menu
+      <div className="sr-tabs" role="tablist">
+        <Link href="/admin/setup" className="sr-tab" style={{ textDecoration: "none" }}>
+          Overview
         </Link>
-        <Link href="/admin/roster" className="underline text-green-800">
+        <Link href="/admin/roster" className="sr-tab" style={{ textDecoration: "none" }}>
           Roster
         </Link>
-        <Link href="/admin/menus" className="underline text-green-800">
-          Menus
+        <Link href="/admin/menus" className="sr-tab" style={{ textDecoration: "none" }}>
+          Menu
         </Link>
-      </nav>
+        <button className="sr-tab" style={{ textDecoration: "none" }}>
+          Defaulters
+        </button>
+      </div>
 
-      <h2 className="font-semibold mb-2">
-        This month —{" "}
-        {now.toLocaleString("default", { month: "long", year: "numeric" })}
-      </h2>
-      <ul className="space-y-2 mb-6">
-        {sectionStats.map((s) => (
-          <li key={s.id} className="border rounded-lg px-3 py-2 flex items-center justify-between">
+      <div className="sr-card">
+        <div className="sr-section-title">This month — September 2026</div>
+
+        {/* Stats */}
+        <div className="sr-stat-row">
+          {sectionStats.map((s) => (
+            <div className="sr-stat" key={s.id}>
+              <div className="sr-stat-num">{s.filled}/{s.total}</div>
+              <div className="sr-stat-lbl">{s.name}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="sr-banner info">
+          Schedule auto-generated for September 2026. Weekdays only.
+        </div>
+      </div>
+
+      {/* Section generation cards */}
+      {sectionStats.map((s) => (
+        <div className="sr-card" key={s.id}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <p className="font-medium text-sm">{s.name}</p>
-              <p className="text-xs text-gray-500">
-                {s.generated ? `${s.filled} / ${s.total} slots filled` : "No schedule yet"}
-              </p>
+              <div className="sr-section-title" style={{ marginBottom: 0 }}>{s.name}</div>
+              <div className="sr-muted" style={{ fontSize: "12px" }}>
+                {s.generated ? `${s.filled} of ${s.total} slots filled` : "No schedule yet"}
+              </div>
             </div>
             <GenerateButton sectionId={s.id} year={year} month={month} />
-          </li>
-        ))}
-      </ul>
+          </div>
+        </div>
+      ))}
 
-      <h2 className="font-semibold mb-2">Defaulters (past grace window)</h2>
-      {defaulters.length === 0 && (
-        <p className="text-xs text-gray-400">
-          {flatSlots.length === 0
-            ? "No schedules generated yet."
-            : "Everyone is signed up."}
-        </p>
-      )}
-      <ul className="space-y-1">
+      {/* Defaulters */}
+      <div className="sr-card">
+        <div className="sr-section-title">Not yet signed up this month</div>
+
+        {defaulters.length === 0 && (
+          <div className="sr-empty">
+            {flatSlots.length === 0 ? "No schedules generated yet." : "Everyone is signed up."}
+          </div>
+        )}
+
         {defaulters.map((d, i) => (
-          <li key={i} className="text-sm border-b py-1">
-            {d.parent} — <span className="text-gray-500">{d.section}</span>
-          </li>
+          <div className="sr-defaulter" key={i}>
+            <span>{d.parent}</span>
+            <span className="sr-chip sr-chip-open">{d.section}</span>
+          </div>
         ))}
-      </ul>
-    </main>
+
+        <div className="sr-banner" style={{ marginTop: 10 }}>
+          Reminders: daily from 5 days before month start, continuing 3 days into the month.
+          After that, parents land here for manual follow-up.
+        </div>
+      </div>
+    </>
   );
 }
 

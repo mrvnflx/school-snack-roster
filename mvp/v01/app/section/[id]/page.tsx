@@ -1,4 +1,3 @@
-
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getDb } from "@/lib/db";
@@ -55,7 +54,6 @@ export default async function SectionPage({
     name: item.name,
   })) || [];
 
-  // Get children linked to this parent in this section
   const allChildren = await db.children.listWithSection();
   const myChildrenInSection: ChildOption[] = allChildren
     .filter((c) => c.child.sectionId === sectionId)
@@ -63,37 +61,62 @@ export default async function SectionPage({
 
   const hasSignedUp = slots.some((s) => s.parentId === user!.id);
 
+  // Determine if this is the user's section (they have a child enrolled)
+  const myChildInThisSection = myChildrenInSection.length > 0;
+
   return (
-    <main className="mx-auto max-w-sm px-4 py-6">
-      <Link href="/" className="text-sm text-gray-500">
+    <>
+      <Link href="/" className="sr-link-return">
         ← All sections
       </Link>
-      <h1 className="text-2xl font-bold mt-1 mb-1">{section.name}</h1>
-      <p className="text-sm text-gray-500 mb-4">
-        {now.toLocaleString("default", { month: "long", year: "numeric" })}
-        {!hasSignedUp && (
-          <span className="text-amber-700"> — you haven't signed up yet</span>
+
+      <h1 style={{ fontSize: "22px", marginBottom: 2 }}>{section.name}</h1>
+      <p className="sr-muted" style={{ marginBottom: 14 }}>
+        September 2026
+        {!hasSignedUp && myChildInThisSection && (
+          <> — you haven&apos;t signed up yet</>
         )}
       </p>
 
-      {!slots.length && (
-        <p className="text-sm text-gray-400">
-          No schedule generated for this month yet. Ask admin to generate it.
-        </p>
-      )}
+      {!slots.length ? (
+        <div className="sr-card">
+          <p className="sr-muted">No schedule generated for this month yet.</p>
+        </div>
+      ) : (
+        <div className="sr-card">
+          <div className="sr-section-title">{section.name} — September 2026</div>
 
-      <ul className="space-y-2">
-        {slotRows.map((slot) => (
-          <SlotRow
-            key={slot.id}
-            slot={slot}
-            myChildren={myChildrenInSection}
-            menuItems={menuItems}
-            currentUserId={user!.id}
-            allSlots={slotRows}
-          />
-        ))}
-      </ul>
-    </main>
+          {hasSignedUp && myChildInThisSection && (
+            <div className="sr-banner ok">
+              You&apos;re all set for {section.name} this month ✓
+            </div>
+          )}
+          {!hasSignedUp && myChildInThisSection && (
+            <div className="sr-banner">
+              You haven&apos;t signed up for {section.name} yet this month — pick an open date below.
+            </div>
+          )}
+          {!myChildInThisSection && (
+            <div className="sr-banner info">
+              Read-only view — your child isn&apos;t in this section.
+            </div>
+          )}
+
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {slotRows.map((slot) => (
+              <SlotRow
+                key={slot.id}
+                slot={slot}
+                myChildren={myChildrenInSection}
+                menuItems={menuItems}
+                currentUserId={user!.id}
+                allSlots={slotRows}
+                isMySection={myChildInThisSection}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
+    </>
   );
 }

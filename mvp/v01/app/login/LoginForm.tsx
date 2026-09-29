@@ -47,53 +47,89 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
   }
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-16">
-      <h1 className="text-2xl font-bold mb-6">Snack Roster Login</h1>
+    <main className="sr-app" style={{ padding: "14px 14px 40px" }}>
+      <div className="sr-top">
+        <div className="sr-brand">
+          <span className="sr-brand-dot" />
+          <h1>Snack Roster</h1>
+        </div>
+      </div>
 
-      {stage === "phone" && (
-        <form onSubmit={sendCode} className="space-y-3">
-          <label className="block text-sm font-medium">Phone number</label>
-          <input
-            type="tel"
-            required
-            placeholder="+91XXXXXXXXXX"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2"
-          />
-          <button
-            disabled={loading}
-            className="w-full bg-green-800 text-white rounded-lg py-2 font-medium disabled:opacity-50"
-          >
-            {loading ? "Sending…" : "Send code"}
-          </button>
-        </form>
-      )}
+      <h1 style={{ fontSize: "20px", fontWeight: 700, color: "var(--chalk-green-dark)", marginBottom: 16 }}>
+        Sign in
+      </h1>
 
-      {stage === "code" && (
-        <form onSubmit={verifyCode} className="space-y-3">
-          <p className="text-sm text-gray-600">Enter the code sent to {phone}.</p>
-          <input
-            type="text"
-            required
-            inputMode="numeric"
-            placeholder="6-digit code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2"
-          />
-          <button
-            disabled={loading}
-            className="w-full bg-green-800 text-white rounded-lg py-2 font-medium disabled:opacity-50"
-          >
-            {loading ? "Verifying…" : "Verify & Log in"}
-          </button>
-        </form>
-      )}
+      <div className="sr-card">
+        {stage === "phone" && (
+          <form onSubmit={sendCode}>
+            <label className="sr-label-small">Phone number</label>
+            <input
+              type="tel"
+              required
+              placeholder="+91XXXXXXXXXX"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="sr-input"
+            />
+            <div className="sr-row">
+              <button
+                type="submit"
+                disabled={loading}
+                className="sr-btn sr-btn-primary sr-btn-block"
+              >
+                {loading ? "Sending…" : "Send code"}
+              </button>
+            </div>
+          </form>
+        )}
 
-      {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
+        {stage === "code" && (
+          <form onSubmit={verifyCode}>
+            <p className="sr-muted" style={{ marginBottom: 10 }}>
+              Enter the code sent to {phone}.
+            </p>
+            <input
+              type="text"
+              required
+              inputMode="numeric"
+              placeholder="6-digit code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="sr-input"
+            />
+            <div className="sr-row">
+              <button
+                type="submit"
+                disabled={loading}
+                className="sr-btn sr-btn-primary sr-btn-block"
+              >
+                {loading ? "Verifying…" : "Verify & Log in"}
+              </button>
+            </div>
+          </form>
+        )}
 
-      <p className="text-xs text-gray-400 mt-6">
+        {error && (
+          <p style={{ color: "var(--coral)", fontSize: "13px", marginTop: 8 }}>
+            {error}
+          </p>
+        )}
+      </div>
+
+      <p
+        className="sr-muted"
+        style={{
+          fontSize: "12px",
+          textAlign: "center",
+          marginTop: 14,
+          background: isInMemoryMode ? "#E7F0E5" : "transparent",
+          border: isInMemoryMode ? "1px solid #C8DCC4" : "none",
+          borderRadius: "12px",
+          padding: isInMemoryMode ? "10px 12px" : 0,
+          color: isInMemoryMode ? "#31502B" : "var(--ink-soft)",
+          fontWeight: isInMemoryMode ? 500 : 400,
+        }}
+      >
         {isInMemoryMode
           ? "Development mode — any code is accepted."
           : "MVP note: no SMS provider is wired up yet. Configure a Test Phone Number in Supabase Auth settings to log in during development."}
