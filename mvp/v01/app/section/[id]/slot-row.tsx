@@ -6,6 +6,8 @@ import type { Child, SlotRowSlot } from "@/lib/slot-utils";
 
 type MenuItem = { id: string; name: string };
 
+export { type Child, type SlotRowSlot } from "@/lib/slot-utils";
+
 export default function SlotRow({
   slot,
   myChildren,

@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getDb } from "@/lib/db";
-import SlotRow from "./slot-row";
-import { type SlotRowSlot, type Child, mapToSlotRowSlot } from "@/lib/slot-utils";
-import { getCurrentYearMonth } from "@/lib/admin-helpers";
+import SlotRow, { type SlotRowSlot, type Child } from "./slot-row";
+import { requireAdmin, getCurrentYearMonth, mapToSlotRowSlot } from "@/lib/admin-helpers";
 
 type MenuOption = { id: string; name: string };
 

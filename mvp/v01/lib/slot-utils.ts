@@ -1,8 +1,7 @@
-import type { SlotWithDetails } from "@/lib/db/types";
-
-/** Shared types and mappers for the SlotRow component.
- * Lives outside "use client" modules so server components can import
- * without pulling in client bundle.
+/** Shared types for the SlotRow component.
+ * This module contains only type definitions — no runtime code,
+ * no "use client" directive. Safe for both server and client modules
+ * to import from.
  */
 
 export type Child = { id: string; name: string };
@@ -16,15 +15,3 @@ export type SlotRowSlot = {
   children: { name: string } | null;
   menu_items: { name: string } | null;
 };
-
-export function mapToSlotRowSlot(slot: SlotWithDetails): SlotRowSlot {
-  return {
-    id: slot.id,
-    date: slot.date,
-    status: slot.status,
-    child_id: slot.childId,
-    parent_id: slot.parentId,
-    children: slot.childName ? { name: slot.childName } : null,
-    menu_items: slot.menuItemName ? { name: slot.menuItemName } : null,
-  };
-}

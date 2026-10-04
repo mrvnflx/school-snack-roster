@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import SlotRow from "./section/[id]/slot-row";
-import type { SlotRowSlot, Child } from "@/lib/slot-utils";
+import SlotRow, { type SlotRowSlot, type Child } from "./section/[id]/slot-row";
 
 type MenuOption = { id: string; name: string };
 

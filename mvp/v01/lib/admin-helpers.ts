@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/lib/db";
 import type { Db } from "@/lib/db";
 import type { SlotWithDetails, ChildWithSection } from "@/lib/db/types";
+import type { SlotRowSlot } from "@/lib/slot-utils";
 
 export async function requireUser() {
   const db = getDb();
@@ -20,6 +21,19 @@ export async function requireAdmin() {
 export function getCurrentYearMonth(): { year: number; month: number } {
   const now = new Date();
   return { year: now.getFullYear(), month: now.getMonth() + 1 };
+}
+
+/** Maps a DB SlotWithDetails to the flat shape expected by SlotRow component. */
+export function mapToSlotRowSlot(slot: SlotWithDetails): SlotRowSlot {
+  return {
+    id: slot.id,
+    date: slot.date,
+    status: slot.status,
+    child_id: slot.childId,
+    parent_id: slot.parentId,
+    children: slot.childName ? { name: slot.childName } : null,
+    menu_items: slot.menuItemName ? { name: slot.menuItemName } : null,
+  };
 }
 
 export async function computeDefaulters(
