@@ -36,9 +36,13 @@ export default function SlotRow({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const dateLabel = new Date(slot.date + "T00:00:00").toLocaleDateString(
-    "default",
-    { weekday: "short", month: "short", day: "numeric" }
+  const weekday = new Date(slot.date + "T00:00:00").toLocaleDateString(
+    "en-US",
+    { weekday: "short" }
+  );
+  const date = new Date(slot.date + "T00:00:00").toLocaleDateString(
+    "en-US",
+    { month: "short", day: "numeric" }
   );
   const isMine = slot.parent_id === currentUserId;
 
@@ -72,7 +76,7 @@ export default function SlotRow({
 
   return (
     <div className="sr-slot">
-      <span className="sr-slot-date">{dateLabel}</span>
+      <span className="sr-slot-date">{weekday}<br />{date}</span>
       <div className="sr-slot-info">
         {slot.status === "filled" ? (
           <span className="sr-slot-info-name">{slot.children?.name}</span>

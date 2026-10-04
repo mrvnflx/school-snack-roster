@@ -47,7 +47,7 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
   }
 
   return (
-    <main className="sr-app" style={{ padding: "14px 14px 40px" }}>
+    <>
       <div className="sr-top">
         <div className="sr-brand">
           <span className="sr-brand-dot" />
@@ -118,22 +118,26 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
 
       <p
         className="sr-muted"
-        style={{
+        style={isInMemoryMode ? {
           fontSize: "12px",
           textAlign: "center",
           marginTop: 14,
-          background: isInMemoryMode ? "#E7F0E5" : "transparent",
-          border: isInMemoryMode ? "1px solid #C8DCC4" : "none",
+          background: "#E7F0E5",
+          border: "1px solid #C8DCC4",
           borderRadius: "12px",
-          padding: isInMemoryMode ? "10px 12px" : 0,
-          color: isInMemoryMode ? "#31502B" : "var(--ink-soft)",
-          fontWeight: isInMemoryMode ? 500 : 400,
+          padding: "10px 12px",
+          color: "#31502B",
+          fontWeight: 500,
+        } : {
+          fontSize: "12px",
+          textAlign: "center",
+          marginTop: 14,
         }}
       >
         {isInMemoryMode
           ? "Development mode — any code is accepted."
           : "MVP note: no SMS provider is wired up yet. Configure a Test Phone Number in Supabase Auth settings to log in during development."}
       </p>
-    </main>
+    </>
   );
 }

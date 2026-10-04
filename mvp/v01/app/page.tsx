@@ -30,7 +30,7 @@ export default async function Home() {
         <div className="sr-section-title" style={{ marginBottom: 10 }}>
           Sections — September 2026
         </div>
-        <ul className="space-y-2" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {sections?.map((s) => (
             <li key={s.id}>
               <Link
@@ -38,10 +38,8 @@ export default async function Home() {
                 className="sr-slot"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
-                <span className="sr-slot-date" style={{ width: "auto", textAlign: "left", fontFamily: "'Work Sans', sans-serif", fontWeight: 600, fontSize: "13.5px" }}>
-                  {s.name}
-                </span>
                 <span className="sr-slot-info">
+                  <span className="sr-slot-info-name" style={{ display: "block", marginBottom: 2 }}>{s.name}</span>
                   <span className="sr-muted">View calendar</span>
                 </span>
                 <span className="sr-btn sr-btn-primary sr-btn-sm" style={{ marginLeft: "auto" }}>

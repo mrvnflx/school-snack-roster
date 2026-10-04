@@ -67,8 +67,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="sr-card">
-        <div className="sr-section-title">This month — September 2026</div>
-
+        <div className="sr-section-title">Schedule auto-generated for September 2026</div>
         {/* Stats */}
         <div className="sr-stat-row">
           {sectionStats.map((s) => (
@@ -79,9 +78,9 @@ export default async function AdminDashboard() {
           ))}
         </div>
 
-        <div className="sr-banner info">
-          Schedule auto-generated for September 2026. Weekdays only.
-        </div>
+        <p className="sr-muted" style={{ fontSize: "12px", marginBottom: 10 }}>
+          Weekdays only. No manual drafting needed.
+        </p>
       </div>
 
       {/* Section generation cards */}
