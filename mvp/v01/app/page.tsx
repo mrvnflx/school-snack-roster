@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { requireUser, getCurrentYearMonth } from "@/lib/admin-helpers";
-import { mapToSlotRowSlot } from "@/app/section/[id]/slot-row";
+import { mapToSlotRowSlot, type Child } from "@/lib/slot-utils";
 import type { SlotWithDetails } from "@/lib/db/types";
 import ParentView from "@/app/parent-view";
-import type { Child } from "@/app/section/[id]/slot-row";
 
 export default async function Home() {
   const { db, user, profile } = await requireUser();
