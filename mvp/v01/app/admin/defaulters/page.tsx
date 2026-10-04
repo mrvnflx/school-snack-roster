@@ -1,7 +1,7 @@
 import { requireAdmin, getCurrentYearMonth, computeDefaulters } from "@/lib/admin-helpers";
 import AdminLayout from "../admin-layout";
 
-export default async function DeferersPage() {
+export default async function DefaultersPage() {
   const { db } = await requireAdmin();
   const { year, month } = getCurrentYearMonth();
 

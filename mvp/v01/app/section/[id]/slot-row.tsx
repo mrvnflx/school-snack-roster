@@ -2,33 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { signUpForSlot, cancelSignUp, requestSwap } from "@/lib/actions";
+import type { Child, SlotRowSlot } from "@/lib/slot-utils";
 
-export type Child = { id: string; name: string };
 type MenuItem = { id: string; name: string };
 
-export type SlotRowSlot = {
-  id: string;
-  date: string;
-  status: "open" | "filled" | "skipped";
-  child_id: string | null;
-  parent_id: string | null;
-  children: { name: string } | null;
-  menu_items: { name: string } | null;
-};
-
-export type { SlotRowSlot as Slot };
-
-export function mapToSlotRowSlot(slot: import("@/lib/db/types").SlotWithDetails): SlotRowSlot {
-  return {
-    id: slot.id,
-    date: slot.date,
-    status: slot.status,
-    child_id: slot.childId,
-    parent_id: slot.parentId,
-    children: slot.childName ? { name: slot.childName } : null,
-    menu_items: slot.menuItemName ? { name: slot.menuItemName } : null,
-  };
-}
+export { type Child, type SlotRowSlot, mapToSlotRowSlot } from "@/lib/slot-utils";
 
 export default function SlotRow({
   slot,
