@@ -1,0 +1,41 @@
+import type { Db } from "@/lib/db";
+import type { SlotWithDetails, ChildWithSection } from "@/lib/db/types";
+
+export async function computeDefaulters(
+  db: Db,
+  sections: { id: string; name: string }[],
+  flatSlots: SlotWithDetails[]
+): Promise<{ parent: string; section: string }[]> {
+  // Build a set of parent+section pairs that have at least one filled slot this month
+  const filledBySectionParent = new Set(
+    flatSlots
+      .filter((slot) => slot.parentId !== null)
+      .map((slot) => `${slot.sectionId}:${slot.parentId}`)
+  );
+
+  const defaulters: { parent: string; section: string }[] = [];
+  const seen = new Set<string>();
+
+  // Get all children-with-section and all profiles
+  const childrenWithSection = await db.children.listWithSection();
+  const allProfiles = await db.profiles.listAll();
+
+  for (const { child, sectionName, parentId } of childrenWithSection as ChildWithSection[]) {
+    if (!sectionName) continue;
+    const parent = parentId ? allProfiles.find((p) => p.id === parentId) : undefined;
+    if (!parent || parent.role !== "parent") continue;
+
+    const key = `${child.sectionId}:${parent.id}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    if (!filledBySectionParent.has(key)) {
+      defaulters.push({
+        parent: parent.fullName ?? parent.phone ?? parent.id,
+        section: sectionName,
+      });
+    }
+  }
+
+  return defaulters;
+}

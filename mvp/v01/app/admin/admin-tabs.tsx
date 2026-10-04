@@ -13,7 +13,7 @@ export default function AdminTabs({
 }) {
   const tabs = [
     { label: "Overview", href: "/admin" },
-    { label: "Defaulters", href: "/admin" },
+    { label: "Defaulters", href: "/admin/defaulters" },
     { label: "Menu", href: "/admin/menus" },
     { label: "Roster", href: "/admin/roster" },
     { label: "Blackout days", href: "/admin/setup" },

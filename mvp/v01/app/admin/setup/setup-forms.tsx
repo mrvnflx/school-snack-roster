@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createSection, addHoliday, addBlackoutDay } from "@/lib/admin-actions";
+import { addHoliday, addBlackoutDay } from "@/lib/admin-actions";
 
 export default function SetupForms({
   sections,
@@ -13,7 +13,6 @@ export default function SetupForms({
   blackouts: { id: string; date: string; reason: string; sectionId: string | null }[];
 }) {
   const [pending, startTransition] = useTransition();
-  const [sectionName, setSectionName] = useState("");
   const [holidayDate, setHolidayDate] = useState("");
   const [holidayName, setHolidayName] = useState("");
   const [blackoutDate, setBlackoutDate] = useState("");
@@ -23,43 +22,6 @@ export default function SetupForms({
 
   return (
     <>
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>Sections</div>
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {sections.map((s) => (
-            <li key={s.id} className="sr-defaulter" style={{ borderBottom: "1px solid var(--line)" }}>
-              {s.name}
-            </li>
-          ))}
-        </ul>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            startTransition(() => { createSection(sectionName); });
-            setSectionName("");
-          }}
-          style={{ marginTop: 10 }}
-        >
-          <div className="sr-row">
-            <input
-              required
-              value={sectionName}
-              onChange={(e) => setSectionName(e.target.value)}
-              placeholder="New section name"
-              className="sr-input"
-              style={{ flex: 1 }}
-            />
-            <button
-              type="submit"
-              disabled={pending}
-              className="sr-btn sr-btn-primary sr-btn-sm"
-            >
-              Add
-            </button>
-          </div>
-        </form>
-      </div>
-
       <div className="sr-card">
         <div className="sr-section-title" style={{ marginBottom: 10 }}>Holiday calendar</div>
         <p className="sr-muted" style={{ fontSize: "12px", marginBottom: 8 }}>
@@ -76,7 +38,9 @@ export default function SetupForms({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            startTransition(() => { addHoliday(currentAcademicYear, holidayDate, holidayName); });
+            startTransition(() => {
+              addHoliday(currentAcademicYear, holidayDate, holidayName);
+            });
             setHolidayDate("");
             setHolidayName("");
           }}

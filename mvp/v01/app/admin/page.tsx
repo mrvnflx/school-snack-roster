@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getDb } from "@/lib/db";
-import type { SlotWithDetails, ChildWithSection } from "@/lib/db/types";
 import GenerateButton from "./generate-button";
+import SectionsForms from "./sections-forms";
 import AdminTabs from "./admin-tabs";
 
 export default async function AdminDashboard() {
@@ -33,15 +33,6 @@ export default async function AdminDashboard() {
     })
   );
 
-  // All slots across sections for this month
-  const allSlots = await Promise.all(
-    sections.map((s) => db.slots.listBySectionAndMonth(s.id, year, month))
-  );
-  const flatSlots: SlotWithDetails[] = allSlots.flat();
-
-  // Defaulter list — parents with children in a section who have no filled slot this month
-  const defaulters = await computeDefaulters(db, sections, flatSlots);
-
   return (
     <>
       <div className="sr-top">
@@ -49,13 +40,17 @@ export default async function AdminDashboard() {
           <span className="sr-brand-dot" />
           <h1>Snack Roster</h1>
         </div>
-        <Link href="/" className="sr-btn-ghost">Parent</Link>
+        <Link href="/" className="sr-btn-ghost">
+          Parent
+        </Link>
       </div>
 
       <AdminTabs activeHref="/admin" />
 
       <div className="sr-card">
-        <div className="sr-section-title">Schedule auto-generated for September 2026</div>
+        <div className="sr-section-title">
+          Schedule auto-generated for September 2026
+        </div>
         {/* Stats */}
         <div className="sr-stat-row">
           {sectionStats.map((s) => (
@@ -70,6 +65,9 @@ export default async function AdminDashboard() {
           Weekdays only. No manual drafting needed.
         </p>
       </div>
+
+      {/* Sections management */}
+      <SectionsForms sections={sections} />
 
       {/* Section generation cards */}
       {sectionStats.map((s) => (
@@ -86,67 +84,12 @@ export default async function AdminDashboard() {
         </div>
       ))}
 
-      {/* Defaulters */}
-      <div className="sr-card">
-        <div className="sr-section-title">Not yet signed up this month</div>
-
-        {defaulters.length === 0 && (
-          <div className="sr-empty">
-            {flatSlots.length === 0 ? "No schedules generated yet." : "Everyone is signed up."}
-          </div>
-        )}
-
-        {defaulters.map((d, i) => (
-          <div className="sr-defaulter" key={i}>
-            <span>{d.parent}</span>
-            <span className="sr-chip sr-chip-open">{d.section}</span>
-          </div>
-        ))}
-
-        <div className="sr-banner" style={{ marginTop: 10 }}>
-          Reminders: daily from 5 days before month start, continuing 3 days into the month.
-          After that, parents land here for manual follow-up.
-        </div>
+      {/* Quick link to full defaulters list */}
+      <div className="sr-banner" style={{ marginTop: 10 }}>
+        <Link href="/admin/defaulters" className="sr-link">
+          View full defaulters list
+        </Link>
       </div>
     </>
   );
-}
-
-async function computeDefaulters(
-  db: ReturnType<typeof getDb>,
-  sections: { id: string; name: string }[],
-  flatSlots: SlotWithDetails[]
-): Promise<{ parent: string; section: string }[]> {
-  // Build a set of parent+section pairs that have at least one filled slot this month
-  const filledBySectionParent = new Set(
-    flatSlots
-      .filter((slot) => slot.parentId !== null)
-      .map((slot) => `${slot.sectionId}:${slot.parentId}`)
-  );
-
-  const defaulters: { parent: string; section: string }[] = [];
-  const seen = new Set<string>();
-
-  // Get all children-with-section and all profiles
-  const childrenWithSection = await db.children.listWithSection();
-  const allProfiles = await db.profiles.listAll();
-
-  for (const { child, sectionName, parentId } of childrenWithSection as ChildWithSection[]) {
-    if (!sectionName) continue;
-    const parent = (parentId ? allProfiles.find((p) => p.id === parentId) : undefined);
-    if (!parent || parent.role !== "parent") continue;
-
-    const key = `${child.sectionId}:${parent.id}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-
-    if (!filledBySectionParent.has(key)) {
-      defaulters.push({
-        parent: parent.fullName ?? parent.phone ?? parent.id,
-        section: sectionName,
-      });
-    }
-  }
-
-  return defaulters;
 }

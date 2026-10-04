@@ -23,7 +23,7 @@ export default async function SetupPage() {
           <span className="sr-brand-dot" />
           <h1>Snack Roster</h1>
         </div>
-        <Link href="/admin" className="sr-btn-ghost">Admin</Link>
+        <Link href="/" className="sr-btn-ghost">Parent</Link>
       </div>
 
       <AdminTabs activeHref="/admin/setup" />
