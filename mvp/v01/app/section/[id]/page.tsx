@@ -97,7 +97,7 @@ export default async function SectionPage({
             </div>
           )}
           {!myChildInThisSection && (
-            <div className="sr-banner info">
+            <div className="sr-banner">
               Read-only view — your child isn&apos;t in this section.
             </div>
           )}
