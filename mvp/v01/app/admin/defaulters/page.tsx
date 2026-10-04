@@ -46,17 +46,27 @@ export default async function DeferersPage() {
         <div className="sr-section-title">Not yet signed up this month</div>
 
         {defaulters.length === 0 && (
-          <div className="sr-empty">
-            {flatSlots.length === 0
-              ? "No schedules generated yet."
-              : "Everyone is signed up."}
-          </div>
+          <div className="sr-empty">No defaulters this month — everyone is signed up.</div>
         )}
 
-        {defaulters.map((d, i) => (
-          <div className="sr-defaulter" key={i}>
-            <span>{d.parent}</span>
-            <span className="sr-chip sr-chip-open">{d.section}</span>
+        {Object.entries(
+          defaulters.reduce(
+            (groups: Record<string, string[]>, d) => {
+              (groups[d.section] = groups[d.section] || []).push(d.parent);
+              return groups;
+            },
+            {}
+          )
+        ).map(([section, parents]) => (
+          <div className="sr-card" key={section}>
+            <div className="sr-section-title">{section}</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {parents.map((p, i) => (
+                <li key={i} className="sr-defaulter">
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         ))}
 

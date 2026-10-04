@@ -216,32 +216,30 @@ h1, h2, h3, h4 {
 /* ============================================================ */
 
 .sr-slot {
-  display: flex;
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 14px 8px;
   align-items: center;
-  justify-content: space-between;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 11px 12px;
-  margin-bottom: 8px;
-  background: var(--paper-raise);
-  transition: border-color 0.15s, background 0.15s;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .sr-slot.mine {
-  border-color: var(--chalk-green);
   background: #EEF4EE;
 }
 
 .sr-slot-date {
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 12px;
   width: 52px;
   color: var(--chalk-green-dark);
+  text-align: center;
 }
 
 .sr-slot-info {
-  flex: 1;
-  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .sr-slot-info-name {

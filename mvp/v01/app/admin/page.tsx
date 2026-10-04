@@ -66,9 +66,6 @@ export default async function AdminDashboard() {
         </p>
       </div>
 
-      {/* Sections management */}
-      <SectionsForms sections={sections} />
-
       {/* Section generation cards */}
       {sectionStats.map((s) => (
         <div className="sr-card" key={s.id}>
@@ -83,6 +80,9 @@ export default async function AdminDashboard() {
           </div>
         </div>
       ))}
+
+      {/* Sections management (moved to bottom — infrequent action) */}
+      <SectionsForms sections={sections} />
 
       {/* Quick link to full defaulters list */}
       <div className="sr-banner" style={{ marginTop: 10 }}>

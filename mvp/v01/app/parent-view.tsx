@@ -98,9 +98,7 @@ export default function ParentView({
         )}
 
         {!activeSection.slots.length ? (
-          <div className="sr-card" style={{ border: "none", background: "transparent", padding: 0, marginBottom: 0 }}>
-            <p className="sr-muted">No schedule generated for this month yet.</p>
-          </div>
+          <div className="sr-empty">No schedule generated for this month yet.</div>
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {activeSection.slots.map((slot) => (

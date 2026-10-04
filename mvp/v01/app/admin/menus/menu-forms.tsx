@@ -23,8 +23,7 @@ function ItemList({ menuId, items }: { menuId: string; items: MenuItem[] }) {
             <span>{item.name}</span>
             <button
               onClick={() => startTransition(() => { deleteMenuItem(item.id); })}
-              className="sr-btn sr-btn-ghost sr-btn-sm"
-              style={{ color: "var(--coral)", marginLeft: 8 }}
+              className="sr-btn sr-btn-coral sr-btn-sm"
             >
               Remove
             </button>

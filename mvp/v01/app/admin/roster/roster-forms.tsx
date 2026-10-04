@@ -159,14 +159,31 @@ export default function RosterForms({
         <div className="sr-section-title" style={{ marginBottom: 10 }}>
           All children ({children.length})
         </div>
-        <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: "240px", overflowY: "auto" }}>
-          {children.map((c) => (
-            <li key={c.id} className="sr-defaulter" style={{ borderBottom: "1px solid var(--line)" }}>
-              <span>{c.name}</span>
-              <span className="sr-muted">{c.sectionName ?? "?"}</span>
-            </li>
-          ))}
-        </ul>
+        {Object.entries(
+          children.reduce(
+            (groups: Record<string, typeof children>, c) => {
+              const key = c.sectionName || "No section";
+              (groups[key] = groups[key] || []).push(c);
+              return groups;
+            },
+            {}
+          )
+        ).map(([section, sectionChildren]) => (
+          <div key={section}>
+            <div className="sr-section-title-light">{section}</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: "200px", overflowY: "auto" }}>
+              {sectionChildren.map((c) => (
+                <li
+                  key={c.id}
+                  className="sr-defaulter"
+                  style={{ borderBottom: "1px solid var(--line)" }}
+                >
+                  <span>{c.name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </>
   );
