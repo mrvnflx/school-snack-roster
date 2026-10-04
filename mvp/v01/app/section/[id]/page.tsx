@@ -1,32 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getDb } from "@/lib/db";
-import SlotRow from "./slot-row";
+import SlotRow, { type SlotRowSlot, type Child, mapToSlotRowSlot } from "./slot-row";
+import { getCurrentYearMonth } from "@/lib/admin-helpers";
 
-type SlotRowSlot = {
-  id: string;
-  date: string;
-  status: "open" | "filled" | "skipped";
-  child_id: string | null;
-  parent_id: string | null;
-  children: { name: string } | null;
-  menu_items: { name: string } | null;
-};
-
-type ChildOption = { id: string; name: string };
 type MenuOption = { id: string; name: string };
-
-function mapToSlotRowSlot(slot: import("@/lib/db/types").SlotWithDetails): SlotRowSlot {
-  return {
-    id: slot.id,
-    date: slot.date,
-    status: slot.status,
-    child_id: slot.childId,
-    parent_id: slot.parentId,
-    children: slot.childName ? { name: slot.childName } : null,
-    menu_items: slot.menuItemName ? { name: slot.menuItemName } : null,
-  };
-}
 
 export default async function SectionPage({
   params,
@@ -38,9 +16,7 @@ export default async function SectionPage({
   const user = await db.auth.getUser();
   if (!user) redirect("/login");
 
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1;
+  const { year, month } = getCurrentYearMonth();
 
   const section = await db.sections.getById(sectionId);
   if (!section) redirect("/");
@@ -55,7 +31,7 @@ export default async function SectionPage({
   })) || [];
 
   const allChildren = await db.children.listWithSection();
-  const myChildrenInSection: ChildOption[] = allChildren
+  const myChildrenInSection: Child[] = allChildren
     .filter((c) => c.child.sectionId === sectionId)
     .map((c) => ({ id: c.child.id, name: c.child.name }));
 

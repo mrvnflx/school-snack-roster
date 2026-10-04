@@ -1,20 +1,15 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getDb } from "@/lib/db";
-import ParentView from "@/app/parent-view";
+import { requireUser, getCurrentYearMonth } from "@/lib/admin-helpers";
+import { mapToSlotRowSlot } from "@/app/section/[id]/slot-row";
 import type { SlotWithDetails } from "@/lib/db/types";
+import ParentView from "@/app/parent-view";
+import type { Child } from "@/app/section/[id]/slot-row";
 
 export default async function Home() {
-  const db = getDb();
-  const user = await db.auth.getUser();
-  if (!user) redirect("/login");
+  const { db, user, profile } = await requireUser();
+  const { year, month } = getCurrentYearMonth();
 
-  const profile = await db.profiles.getById(user.id);
   const sections = await db.sections.list(false);
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1;
 
   // Pre-fetch data for every section so the client can switch tabs without round-trips
   const sectionData = await Promise.all(
@@ -35,25 +30,17 @@ export default async function Home() {
       }));
 
       const allChildren = await db.children.listWithSection();
-      const myChildrenInSection = allChildren
-        .filter((c) => c.child.sectionId === section.id && c.parentId === user.id)
+      const myChildrenInSection: Child[] = allChildren
+        .filter((c) => c.child.sectionId === section.id && c.parentId === user!.id)
         .map((c) => ({ id: c.child.id, name: c.child.name }));
 
-      const hasSignedUp = slots.some((s) => s.parentId === user.id);
+      const hasSignedUp = slots.some((s) => s.parentId === user!.id);
       const isMySection = myChildrenInSection.length > 0;
 
       return {
         id: section.id,
         name: section.name,
-        slots: slots.map((slot) => ({
-          id: slot.id,
-          date: slot.date,
-          status: slot.status,
-          child_id: slot.childId,
-          parent_id: slot.parentId,
-          children: slot.childName ? { name: slot.childName } : null,
-          menu_items: slot.menuItemName ? { name: slot.menuItemName } : null,
-        })),
+        slots: slots.map(mapToSlotRowSlot),
         menuItems,
         myChildren: myChildrenInSection,
         hasSignedUp,
@@ -77,12 +64,12 @@ export default async function Home() {
       </div>
 
       <p className="sr-muted" style={{ marginBottom: 14 }}>
-        {profile?.fullName || user.phone} — pick a section to view its calendar.
+        {profile?.fullName || user!.phone} — pick a section to view its calendar.
       </p>
 
       <ParentView
         sections={sectionData}
-        currentUserId={user.id}
+        currentUserId={user!.id}
         year={year}
         month={month}
       />

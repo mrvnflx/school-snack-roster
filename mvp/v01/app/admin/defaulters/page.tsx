@@ -1,21 +1,9 @@
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { getDb } from "@/lib/db";
-import type { SlotWithDetails } from "@/lib/db/types";
-import AdminTabs from "../admin-tabs";
-import { computeDefaulters } from "@/lib/admin-helpers";
+import { requireAdmin, getCurrentYearMonth, computeDefaulters } from "@/lib/admin-helpers";
+import AdminLayout from "../admin-layout";
 
 export default async function DeferersPage() {
-  const db = getDb();
-  const user = await db.auth.getUser();
-  if (!user) redirect("/login");
-
-  const profile = await db.profiles.getById(user.id);
-  if (profile?.role !== "admin") redirect("/");
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1;
+  const { db } = await requireAdmin();
+  const { year, month } = getCurrentYearMonth();
 
   const sections = await db.sections.list();
 
@@ -23,25 +11,13 @@ export default async function DeferersPage() {
   const allSlots = await Promise.all(
     sections.map((s) => db.slots.listBySectionAndMonth(s.id, year, month))
   );
-  const flatSlots: SlotWithDetails[] = allSlots.flat();
+  const flatSlots = allSlots.flat();
 
   // Defaulter list
   const defaulters = await computeDefaulters(db, sections, flatSlots);
 
   return (
-    <>
-      <div className="sr-top">
-        <div className="sr-brand">
-          <span className="sr-brand-dot" />
-          <h1>Snack Roster</h1>
-        </div>
-        <Link href="/" className="sr-btn-ghost">
-          Parent
-        </Link>
-      </div>
-
-      <AdminTabs activeHref="/admin/defaulters" />
-
+    <AdminLayout activeHref="/admin/defaulters">
       <div className="sr-card">
         <div className="sr-section-title">Not yet signed up this month</div>
 
@@ -75,6 +51,6 @@ export default async function DeferersPage() {
           into the month. After that, parents land here for manual follow-up.
         </div>
       </div>
-    </>
+    </AdminLayout>
   );
 }

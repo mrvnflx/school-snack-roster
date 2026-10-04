@@ -3,9 +3,10 @@
 import { useState, useTransition } from "react";
 import { signUpForSlot, cancelSignUp, requestSwap } from "@/lib/actions";
 
-type Child = { id: string; name: string };
+export type Child = { id: string; name: string };
 type MenuItem = { id: string; name: string };
-type Slot = {
+
+export type SlotRowSlot = {
   id: string;
   date: string;
   status: "open" | "filled" | "skipped";
@@ -15,6 +16,20 @@ type Slot = {
   menu_items: { name: string } | null;
 };
 
+export type { SlotRowSlot as Slot };
+
+export function mapToSlotRowSlot(slot: import("@/lib/db/types").SlotWithDetails): SlotRowSlot {
+  return {
+    id: slot.id,
+    date: slot.date,
+    status: slot.status,
+    child_id: slot.childId,
+    parent_id: slot.parentId,
+    children: slot.childName ? { name: slot.childName } : null,
+    menu_items: slot.menuItemName ? { name: slot.menuItemName } : null,
+  };
+}
+
 export default function SlotRow({
   slot,
   myChildren,
@@ -23,11 +38,11 @@ export default function SlotRow({
   allSlots,
   isMySection,
 }: {
-  slot: Slot;
+  slot: SlotRowSlot;
   myChildren: Child[];
   menuItems: MenuItem[];
   currentUserId: string;
-  allSlots: Slot[];
+  allSlots: SlotRowSlot[];
   isMySection: boolean;
 }) {
   const [open, setOpen] = useState(false);

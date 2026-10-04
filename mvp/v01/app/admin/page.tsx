@@ -1,21 +1,12 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getDb } from "@/lib/db";
+import { requireAdmin, getCurrentYearMonth } from "@/lib/admin-helpers";
 import GenerateButton from "./generate-button";
 import SectionsForms from "./sections-forms";
-import AdminTabs from "./admin-tabs";
+import AdminLayout from "./admin-layout";
 
 export default async function AdminDashboard() {
-  const db = getDb();
-  const user = await db.auth.getUser();
-  if (!user) redirect("/login");
-
-  const profile = await db.profiles.getById(user.id);
-  if (profile?.role !== "admin") redirect("/");
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1;
+  const { db, user, profile } = await requireAdmin();
+  const { year, month } = getCurrentYearMonth();
 
   const sections = await db.sections.list();
 
@@ -34,19 +25,7 @@ export default async function AdminDashboard() {
   );
 
   return (
-    <>
-      <div className="sr-top">
-        <div className="sr-brand">
-          <span className="sr-brand-dot" />
-          <h1>Snack Roster</h1>
-        </div>
-        <Link href="/" className="sr-btn-ghost">
-          Parent
-        </Link>
-      </div>
-
-      <AdminTabs activeHref="/admin" />
-
+    <AdminLayout activeHref="/admin">
       <div className="sr-card">
         <div className="sr-section-title">
           Schedule auto-generated for September 2026
@@ -90,6 +69,6 @@ export default async function AdminDashboard() {
           View full defaulters list
         </Link>
       </div>
-    </>
+    </AdminLayout>
   );
 }

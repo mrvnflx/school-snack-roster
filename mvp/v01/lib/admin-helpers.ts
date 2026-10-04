@@ -1,5 +1,26 @@
+import { redirect } from "next/navigation";
+import { getDb } from "@/lib/db";
 import type { Db } from "@/lib/db";
 import type { SlotWithDetails, ChildWithSection } from "@/lib/db/types";
+
+export async function requireUser() {
+  const db = getDb();
+  const user = await db.auth.getUser();
+  if (!user) redirect("/login");
+  const profile = await db.profiles.getById(user.id);
+  return { db, user, profile };
+}
+
+export async function requireAdmin() {
+  const { db, user, profile } = await requireUser();
+  if (profile?.role !== "admin") redirect("/");
+  return { db, user, profile };
+}
+
+export function getCurrentYearMonth(): { year: number; month: number } {
+  const now = new Date();
+  return { year: now.getFullYear(), month: now.getMonth() + 1 };
+}
 
 export async function computeDefaulters(
   db: Db,

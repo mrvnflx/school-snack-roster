@@ -1,27 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import SlotRow from "./section/[id]/slot-row";
+import SlotRow, { type SlotRowSlot, type Child } from "./section/[id]/slot-row";
 
-type ChildOption = { id: string; name: string };
 type MenuOption = { id: string; name: string };
-
-type SlotRowSlot = {
-  id: string;
-  date: string;
-  status: "open" | "filled" | "skipped";
-  child_id: string | null;
-  parent_id: string | null;
-  children: { name: string } | null;
-  menu_items: { name: string } | null;
-};
 
 type SectionData = {
   id: string;
   name: string;
   slots: SlotRowSlot[];
   menuItems: MenuOption[];
-  myChildren: ChildOption[];
+  myChildren: Child[];
   hasSignedUp: boolean;
   isMySection: boolean;
 };
