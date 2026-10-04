@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getDb } from "@/lib/db";
 import type { SlotWithDetails, ChildWithSection } from "@/lib/db/types";
 import GenerateButton from "./generate-button";
+import AdminTabs from "./admin-tabs";
 
 export default async function AdminDashboard() {
   const db = getDb();
@@ -51,20 +52,7 @@ export default async function AdminDashboard() {
         <Link href="/" className="sr-btn-ghost">Parent</Link>
       </div>
 
-      <div className="sr-tabs" role="tablist">
-        <Link href="/admin/setup" className="sr-tab" style={{ textDecoration: "none" }}>
-          Overview
-        </Link>
-        <Link href="/admin/roster" className="sr-tab" style={{ textDecoration: "none" }}>
-          Roster
-        </Link>
-        <Link href="/admin/menus" className="sr-tab" style={{ textDecoration: "none" }}>
-          Menu
-        </Link>
-        <button className="sr-tab" style={{ textDecoration: "none" }}>
-          Defaulters
-        </button>
-      </div>
+      <AdminTabs activeHref="/admin" />
 
       <div className="sr-card">
         <div className="sr-section-title">Schedule auto-generated for September 2026</div>

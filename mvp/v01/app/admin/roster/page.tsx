@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getDb } from "@/lib/db";
+import AdminTabs from "../admin-tabs";
 import RosterForms from "./roster-forms";
 
 export default async function RosterPage() {
@@ -31,12 +32,7 @@ export default async function RosterPage() {
         <Link href="/admin" className="sr-btn-ghost">Admin</Link>
       </div>
 
-      <div className="sr-tabs" style={{ marginBottom: 0 }}>
-        <Link href="/admin" className="sr-tab" style={{ textDecoration: "none" }}>Overview</Link>
-        <Link href="/admin/roster" className="sr-tab active" style={{ textDecoration: "none" }}>Roster</Link>
-        <Link href="/admin/menus" className="sr-tab" style={{ textDecoration: "none" }}>Menu</Link>
-        <Link href="/admin" className="sr-tab" style={{ textDecoration: "none" }}>Defaulters</Link>
-      </div>
+      <AdminTabs activeHref="/admin/roster" />
 
       <RosterForms sections={sections} children={children} />
     </>
