@@ -1,7 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { useInMemoryDb } from "@/lib/db/config";
 
 export async function middleware(request: NextRequest) {
+  // In in-memory mock mode, skip Supabase auth — the in-memory auth
+  // layer reads its own cookie in server components.
+  if (useInMemoryDb()) {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

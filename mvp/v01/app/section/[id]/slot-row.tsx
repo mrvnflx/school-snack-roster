@@ -2,18 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { signUpForSlot, cancelSignUp, requestSwap } from "@/lib/actions";
+import type { Child, SlotRowSlot } from "@/lib/slot-utils";
 
-type Child = { id: string; name: string };
 type MenuItem = { id: string; name: string };
-type Slot = {
-  id: string;
-  date: string;
-  status: "open" | "filled" | "skipped";
-  child_id: string | null;
-  parent_id: string | null;
-  children: { name: string } | null;
-  menu_items: { name: string } | null;
-};
+
+export { type Child, type SlotRowSlot } from "@/lib/slot-utils";
 
 export default function SlotRow({
   slot,
@@ -21,12 +14,14 @@ export default function SlotRow({
   menuItems,
   currentUserId,
   allSlots,
+  isMySection,
 }: {
-  slot: Slot;
+  slot: SlotRowSlot;
   myChildren: Child[];
   menuItems: MenuItem[];
   currentUserId: string;
-  allSlots: Slot[];
+  allSlots: SlotRowSlot[];
+  isMySection: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [childId, setChildId] = useState(myChildren[0]?.id ?? "");
@@ -34,12 +29,15 @@ export default function SlotRow({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const dateLabel = new Date(slot.date + "T00:00:00").toLocaleDateString(
-    "default",
-    { weekday: "short", month: "short", day: "numeric" }
+  const weekday = new Date(slot.date + "T00:00:00").toLocaleDateString(
+    "en-US",
+    { weekday: "short" }
+  );
+  const date = new Date(slot.date + "T00:00:00").toLocaleDateString(
+    "en-US",
+    { month: "short", day: "numeric" }
   );
   const isMine = slot.parent_id === currentUserId;
-  const mySlots = allSlots.filter((s) => s.parent_id === currentUserId);
 
   function submitSignup() {
     setError(null);
@@ -59,6 +57,7 @@ export default function SlotRow({
   }
 
   function submitSwap() {
+    const mySlots = allSlots.filter((s) => s.parent_id === currentUserId);
     if (!mySlots[0]) return setError("You don't have a slot to offer for swap.");
     setError(null);
     startTransition(async () => {
@@ -69,94 +68,96 @@ export default function SlotRow({
   }
 
   return (
-    <li className="border rounded-lg px-3 py-2">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-medium text-sm">{dateLabel}</p>
-          {slot.status === "filled" ? (
-            <p className="text-xs text-gray-500">
-              {slot.children?.name} — {slot.menu_items?.name}
-              {isMine && <span className="text-green-700"> (you)</span>}
-            </p>
-          ) : (
-            <p className="text-xs text-gray-400">Open</p>
-          )}
-        </div>
-
-        {isMine && (
-          <button
-            onClick={submitCancel}
-            disabled={pending}
-            className="text-xs text-red-600 underline"
-          >
-            Cancel
-          </button>
+    <div className="sr-slot">
+      <span className="sr-slot-date">{weekday}<br />{date}</span>
+      <div className="sr-slot-info">
+        {slot.status === "filled" ? (
+          <span className="sr-slot-info-name">{slot.children?.name}</span>
+        ) : (
+          <span className="sr-muted">Open slot</span>
         )}
-        {!isMine && slot.status === "open" && myChildren.length > 0 && (
-          <button
-            onClick={() => setOpen(!open)}
-            className="text-xs text-green-800 underline"
-          >
-            {open ? "Close" : "Sign up"}
-          </button>
+        {slot.status === "filled" && slot.menu_items && (
+          <span className="sr-slot-info-item">{slot.menu_items.name}</span>
         )}
-        {!isMine && slot.status === "filled" && (
-          <button
-            onClick={() => setOpen(!open)}
-            className="text-xs text-blue-700 underline"
-          >
-            {open ? "Close" : "Request swap"}
-          </button>
+        {isMine && slot.status === "filled" && (
+          <span className="sr-chip sr-chip-mine" style={{ marginLeft: 6, fontSize: 10 }}>You</span>
         )}
       </div>
+      {isMine && slot.status === "filled" && (
+        <button
+          onClick={submitCancel}
+          disabled={pending}
+          className="sr-btn sr-btn-secondary sr-btn-sm"
+        >
+          {pending ? "Saving…" : "Cancel"}
+        </button>
+      )}
+      {!isMine && slot.status === "open" && isMySection && myChildren.length > 0 && (
+        <button
+          onClick={() => setOpen(!open)}
+          className="sr-btn sr-btn-primary sr-btn-sm"
+        >
+          {open ? "Close" : "Sign up"}
+        </button>
+      )}
+      {!isMine && slot.status === "filled" && isMySection && (
+        <button
+          onClick={() => setOpen(!open)}
+          className="sr-btn sr-btn-secondary sr-btn-sm"
+        >
+          {open ? "Close" : "Request swap"}
+        </button>
+      )}
+      {!isMySection && slot.status === "filled" && (
+        <span className="sr-chip sr-chip-filled">Filled</span>
+      )}
+      {!isMySection && slot.status === "open" && (
+        <span className="sr-chip sr-chip-open">Open</span>
+      )}
 
       {open && slot.status === "open" && (
-        <div className="mt-2 space-y-2">
+        <div className="sr-row">
           <select
             value={childId}
             onChange={(e) => setChildId(e.target.value)}
-            className="w-full border rounded px-2 py-1 text-sm"
+            className="sr-input"
           >
             {myChildren.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
+              <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
           <select
             value={menuItemId}
             onChange={(e) => setMenuItemId(e.target.value)}
-            className="w-full border rounded px-2 py-1 text-sm"
+            className="sr-input"
           >
             {menuItems.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name}
-              </option>
+              <option key={m.id} value={m.id}>{m.name}</option>
             ))}
           </select>
           <button
             onClick={submitSignup}
             disabled={pending}
-            className="w-full bg-green-800 text-white rounded py-1.5 text-sm"
+            className="sr-btn sr-btn-primary sr-btn-block"
           >
             {pending ? "Saving…" : "Confirm sign-up"}
           </button>
         </div>
       )}
 
-      {open && slot.status === "filled" && !isMine && (
-        <div className="mt-2">
+      {open && slot.status === "filled" && !isMine && isMySection && (
+        <div className="sr-row">
           <button
             onClick={submitSwap}
             disabled={pending}
-            className="w-full bg-blue-700 text-white rounded py-1.5 text-sm"
+            className="sr-btn sr-btn-primary sr-btn-block"
           >
             {pending ? "Sending…" : "Send swap request"}
           </button>
         </div>
       )}
 
-      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
-    </li>
+      {error && <p className="sr-muted" style={{ marginTop: 6 }}>{error}</p>}
+    </div>
   );
 }

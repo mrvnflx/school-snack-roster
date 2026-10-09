@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import SlotRow from "./slot-row";
+import { getDb } from "@/lib/db";
+import SlotRow, { type SlotRowSlot, type Child } from "./slot-row";
+import { requireAdmin, getCurrentYearMonth, mapToSlotRowSlot } from "@/lib/admin-helpers";
+
+type MenuOption = { id: string; name: string };
 
 export default async function SectionPage({
   params,
@@ -9,105 +12,87 @@ export default async function SectionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: sectionId } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const db = getDb();
+  const user = await db.auth.getUser();
   if (!user) redirect("/login");
 
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1;
+  const { year, month } = getCurrentYearMonth();
 
-  const { data: section } = await supabase
-    .from("sections")
-    .select("id, name")
-    .eq("id", sectionId)
-    .single();
+  const section = await db.sections.getById(sectionId);
+  if (!section) redirect("/");
 
-  const { data: schedule } = await supabase
-    .from("schedules")
-    .select("id")
-    .eq("section_id", sectionId)
-    .eq("year", year)
-    .eq("month", month)
-    .single();
+  const slots = await db.slots.listBySectionAndMonth(sectionId, year, month);
+  const slotRows: SlotRowSlot[] = slots.map(mapToSlotRowSlot);
 
-  const { data: slotsRaw } = schedule
-    ? await supabase
-        .from("slots")
-        .select("id, date, status, child_id, parent_id, menu_item_id, children(name), menu_items(name)")
-        .eq("schedule_id", schedule.id)
-        .order("date")
-    : { data: [] };
-  const slots = (slotsRaw ?? []).map((s: any) => ({
-    ...s,
-    children: Array.isArray(s.children) ? s.children[0] ?? null : s.children,
-    menu_items: Array.isArray(s.menu_items) ? s.menu_items[0] ?? null : s.menu_items,
-  }));
+  const activeMenu = await db.menus.getActiveMenuForSection(sectionId);
+  const menuItems: MenuOption[] = activeMenu?.items.map((item) => ({
+    id: item.id,
+    name: item.name,
+  })) || [];
 
-  // Active menu for this section: override if present, else global.
-  const { data: overrideMenu } = await supabase
-    .from("menus")
-    .select("id")
-    .eq("section_id", sectionId)
-    .maybeSingle();
-  const { data: globalMenu } = await supabase
-    .from("menus")
-    .select("id")
-    .is("section_id", null)
-    .maybeSingle();
-  const menuId = overrideMenu?.id ?? globalMenu?.id;
-  const { data: menuItems } = menuId
-    ? await supabase
-        .from("menu_items")
-        .select("id, name")
-        .eq("menu_id", menuId)
-        .order("position")
-    : { data: [] };
+  const allChildren = await db.children.listWithSection();
+  const myChildrenInSection: Child[] = allChildren
+    .filter((c) => c.child.sectionId === sectionId)
+    .map((c) => ({ id: c.child.id, name: c.child.name }));
 
-  // This parent's children in this section (for the sign-up dropdown).
-  const { data: myChildren } = await supabase
-    .from("parent_children")
-    .select("children!inner(id, name, section_id)")
-    .eq("parent_id", user.id);
-  const myChildrenInSection = (myChildren ?? [])
-    .map((r: any) => r.children)
-    .filter((c: any) => c.section_id === sectionId);
+  const hasSignedUp = slots.some((s) => s.parentId === user!.id);
 
-  const hasSignedUp = (slots ?? []).some((s: any) => s.parent_id === user.id);
+  // Determine if this is the user's section (they have a child enrolled)
+  const myChildInThisSection = myChildrenInSection.length > 0;
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-6">
-      <Link href="/" className="text-sm text-gray-500">
+    <>
+      <Link href="/" className="sr-link-return">
         ← All sections
       </Link>
-      <h1 className="text-2xl font-bold mt-1 mb-1">{section?.name}</h1>
-      <p className="text-sm text-gray-500 mb-4">
-        {now.toLocaleString("default", { month: "long", year: "numeric" })}
-        {!hasSignedUp && (
-          <span className="text-amber-700"> — you haven't signed up yet</span>
+
+      <h1 style={{ fontSize: "22px", marginBottom: 2 }}>{section.name}</h1>
+      <p className="sr-muted" style={{ marginBottom: 14 }}>
+        September 2026
+        {!hasSignedUp && myChildInThisSection && (
+          <> — you haven&apos;t signed up yet</>
         )}
       </p>
 
-      {!slots?.length && (
-        <p className="text-sm text-gray-400">
-          No schedule generated for this month yet. Ask admin to generate it.
-        </p>
-      )}
+      {!slots.length ? (
+        <div className="sr-card">
+          <p className="sr-muted">No schedule generated for this month yet.</p>
+        </div>
+      ) : (
+        <div className="sr-card">
+          <div className="sr-section-title">{section.name} — September 2026</div>
 
-      <ul className="space-y-2">
-        {slots?.map((slot: any) => (
-          <SlotRow
-            key={slot.id}
-            slot={slot}
-            myChildren={myChildrenInSection}
-            menuItems={menuItems ?? []}
-            currentUserId={user.id}
-            allSlots={slots}
-          />
-        ))}
-      </ul>
-    </main>
+          {hasSignedUp && myChildInThisSection && (
+            <div className="sr-banner ok">
+              You&apos;re all set for {section.name} this month ✓
+            </div>
+          )}
+          {!hasSignedUp && myChildInThisSection && (
+            <div className="sr-banner">
+              You haven&apos;t signed up for {section.name} yet this month — pick an open date below.
+            </div>
+          )}
+          {!myChildInThisSection && (
+            <div className="sr-banner">
+              Read-only view — your child isn&apos;t in this section.
+            </div>
+          )}
+
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {slotRows.map((slot) => (
+              <SlotRow
+                key={slot.id}
+                slot={slot}
+                myChildren={myChildrenInSection}
+                menuItems={menuItems}
+                currentUserId={user!.id}
+                allSlots={slotRows}
+                isMySection={myChildInThisSection}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
+    </>
   );
 }

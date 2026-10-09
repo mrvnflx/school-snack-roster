@@ -1,55 +1,77 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { requireUser, getCurrentYearMonth, mapToSlotRowSlot } from "@/lib/admin-helpers";
+import type { Child } from "@/lib/slot-utils";
+import type { SlotWithDetails } from "@/lib/db/types";
+import ParentView from "@/app/parent-view";
 
 export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { db, user, profile } = await requireUser();
+  const { year, month } = getCurrentYearMonth();
 
-  if (!user) redirect("/login");
+  const sections = await db.sections.list(false);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, full_name")
-    .eq("id", user.id)
-    .single();
+  // Pre-fetch data for every section so the client can switch tabs without round-trips
+  const sectionData = await Promise.all(
+    sections.map(async (section) => {
+      const schedule = await db.schedules.getBySectionYearMonth(
+        section.id,
+        year,
+        month
+      );
+      const slots: SlotWithDetails[] = schedule
+        ? await db.slots.listBySchedule(schedule.id)
+        : [];
 
-  const { data: sections } = await supabase
-    .from("sections")
-    .select("id, name")
-    .eq("archived", false)
-    .order("name");
+      const activeMenu = await db.menus.getActiveMenuForSection(section.id);
+      const menuItems = (activeMenu?.items ?? []).map((item) => ({
+        id: item.id,
+        name: item.name,
+      }));
+
+      const allChildren = await db.children.listWithSection();
+      const myChildrenInSection: Child[] = allChildren
+        .filter((c) => c.child.sectionId === section.id && c.parentId === user!.id)
+        .map((c) => ({ id: c.child.id, name: c.child.name }));
+
+      const hasSignedUp = slots.some((s) => s.parentId === user!.id);
+      const isMySection = myChildrenInSection.length > 0;
+
+      return {
+        id: section.id,
+        name: section.name,
+        slots: slots.map(mapToSlotRowSlot),
+        menuItems,
+        myChildren: myChildrenInSection,
+        hasSignedUp,
+        isMySection,
+      };
+    })
+  );
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-10">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Snack Roster</h1>
+    <>
+      <div className="sr-top">
+        <div className="sr-brand">
+          <span className="sr-brand-dot" />
+          <h1>Snack Roster</h1>
+        </div>
         {profile?.role === "admin" && (
-          <Link href="/admin" className="text-sm underline text-green-800">
+          <Link href="/admin" className="sr-btn-ghost">
             Admin
           </Link>
         )}
       </div>
 
-      <p className="text-sm text-gray-500 mb-4">
-        {profile?.full_name || user.phone} — pick a section to view its
-        calendar.
+      <p className="sr-muted" style={{ marginBottom: 14 }}>
+        {profile?.fullName || user!.phone} — pick a section to view its calendar.
       </p>
 
-      <ul className="space-y-2">
-        {sections?.map((s) => (
-          <li key={s.id}>
-            <Link
-              href={`/section/${s.id}`}
-              className="block border rounded-lg px-4 py-3 hover:bg-gray-50"
-            >
-              {s.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </main>
+      <ParentView
+        sections={sectionData}
+        currentUserId={user!.id}
+        year={year}
+        month={month}
+      />
+    </>
   );
 }
