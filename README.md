@@ -1,6 +1,23 @@
-# Snack Roster — MVP
+# Snack Roster
 
 Next.js (App Router) + Supabase. Mobile-first PWA-ready layout.
+
+## Project Structure
+
+```
+school-snack-roster/
+├── app/              # Next.js App Router (all routes)
+├── lib/              # Server actions, DB layer, helpers
+├── public/           # Static assets (favicon, icons, PWA manifest)
+├── supabase/         # DB migrations + seed
+├── prototype/        # Clickable HTML prototype (source of truth)
+├── docs/             # Product requirements
+└── middleware.ts     # Auth middleware
+```
+
+The **prototype** lives in `prototype/` and is served at `/proto` by copying
+`prototype/index.html` → `public/proto/index.html` during build. Run
+`npm run copy-proto` once before `npm run dev` for local development.
 
 ## What's built (Phase 1–5 of the plan)
 - Full DB schema + RLS policies (`supabase/migrations/`)
@@ -50,6 +67,9 @@ npm run dev
 ## 3. Deploy
 Push to a GitHub repo, import into Vercel, add the two env vars from
 `.env.local.example` in Vercel's project settings. No other config needed.
+
+> The `/proto` route is auto-generated during Vercel's build via the
+> `prebuild` npm hook — no additional Vercel configuration required.
 
 ## Swapping in real SMS later
 Two independent things currently stubbed, both swappable without touching

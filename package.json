@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "copy-proto": "node scripts/copy-proto.js",
+    "prebuild": "node scripts/copy-proto.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
