@@ -1,6 +1,38 @@
 # Snack Roster
 
-Next.js (App Router) + Supabase. Mobile-first PWA-ready layout.
+A Next.js (App Router) + Supabase web app that automates school snack
+sign-ups. Mobile-first, PWA-ready, and accessible via a single URL — no app
+store install needed.
+
+## About / Purpose
+
+Each classroom section (e.g. "Env-1", "Elementary", "Env-2") currently runs a
+manual, paper-based monthly snack sign-up at the school noticeboard:
+
+- Admin prints a blank calendar grid per section per month, with weekdays as
+  slots and weekends/holidays blacked out.
+- A fixed menu of ~10 snack items is posted alongside the calendar; each parent
+  picks one item for their assigned date.
+- Parents write their child's name into a date slot in person.
+- Admin manually chases parents who haven't signed up, often into week 2–3 of
+  the month.
+- Parents have no reminder system and can forget their date.
+
+**Snack Roster** replaces this with a digital PWA:
+
+- **Auto-generated schedules** — weekdays only, holidays and blackout days
+  excluded, per section, per month (no more manual drafting).
+- **Parent self-service** — phone-OTP login, sign up / edit / cancel up to 3
+  days before the slot, and parent-to-parent swap requests.
+- **Admin dashboard** — manage sections, holiday calendar, blackouts, menus
+  (global + per-section overrides), roster (CSV import or manual), fill-status,
+  and a defaulter list.
+- **Reminder engine** — nagging reminders start 5 days before month start,
+  continue 3 days into the new month for unsigned parents, then surface to the
+  admin defaulter list.
+
+See [`docs/snack-roster-app-prd.md`](docs/snack-roster-app-prd.md) for the full
+product requirements and decisions log.
 
 ## Project Structure
 
