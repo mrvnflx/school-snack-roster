@@ -55,11 +55,16 @@ export default async function Home() {
           <span className="sr-brand-dot" />
           <h1>Snack Roster</h1>
         </div>
-        {profile?.role === "admin" && (
-          <Link href="/admin" className="sr-btn-ghost">
-            Admin
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          {profile?.role === "admin" && (
+            <Link href="/admin" className="sr-btn-ghost">
+              Admin
+            </Link>
+          )}
+          <Link href="/proto" className="sr-btn-ghost">
+            Proto
           </Link>
-        )}
+        </div>
       </div>
 
       <p className="sr-muted" style={{ marginBottom: 14 }}>
