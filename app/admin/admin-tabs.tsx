@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 /** Shared admin tab bar — matches the prototype's tab set:
@@ -11,6 +14,7 @@ export default function AdminTabs({
 }: {
   activeHref: string;
 }) {
+  const pathname = usePathname();
   const tabs = [
     { label: "Overview", href: "/admin" },
     { label: "Defaulters", href: "/admin/defaulters" },
@@ -25,7 +29,7 @@ export default function AdminTabs({
         <Link
           key={tab.label}
           href={tab.href}
-          className={`tab${activeHref === tab.href ? " active" : ""}`}
+          className={`tab${pathname === tab.href ? " active" : ""}`}
           style={{ textDecoration: "none" }}
         >
           {tab.label}
