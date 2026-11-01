@@ -5,16 +5,16 @@
  * ============================================================ */
 
 :root {
-  --paper: #EFEBDD;
-  --paper-raise: #FBF8EE;
-  --chalk-green: #2E4A3B;
-  --chalk-green-dark: #20342A;
-  --mustard: #E0A526;
-  --coral: #DD5B4A;
-  --ink: #26302A;
-  --ink-soft: #5C6960;
-  --line: rgba(38, 48, 42, 0.14);
-  --pin: #B23A2E;
+  --paper: #FDFBF7;
+  --paper-raise: #FFFEFA;
+  --chalk-green: #15803D;
+  --chalk-green-dark: #166534;
+  --mustard: #FDE68A;
+  --coral: #C2410C;
+  --ink: #292C24;
+  --ink-soft: #6B6B5E;
+  --line: #FEF3C7;
+  --pin: #B45309;
 
   --color-background: var(--paper);
   --color-foreground: var(--ink);
@@ -29,8 +29,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Work Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: 'Baloo 2', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-fredoka), ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 /* ============================================================ */
@@ -46,10 +46,7 @@ html, body {
 
 body {
   background: var(--paper);
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(38,48,42,0.06) 1px, transparent 0);
-  background-size: 14px 14px;
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--font-nunito), sans-serif;
   color: var(--ink);
   min-height: 100vh;
   display: flex;
@@ -57,7 +54,7 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Baloo 2', sans-serif;
+  font-family: var(--font-fredoka), sans-serif;
   margin: 0;
 }
 
@@ -110,7 +107,7 @@ h1, h2, h3, h4 {
 .sr-role-toggle button {
   border: none;
   background: transparent;
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--font-nunito), sans-serif;
   font-weight: 600;
   font-size: 12.5px;
   padding: 6px 12px;
@@ -130,7 +127,7 @@ h1, h2, h3, h4 {
 .sr-card {
   background: var(--paper-raise);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 14px;
   margin-bottom: 12px;
 }
@@ -157,15 +154,15 @@ h1, h2, h3, h4 {
 
 .sr-select {
   width: 100%;
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--font-nunito), sans-serif;
   font-size: 14px;
   padding: 9px 10px;
-  border-radius: 9px;
+  border-radius: 16px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--paper-raise);
   color: var(--ink);
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235C6960' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6B5E' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   padding-right: 28px;
@@ -199,7 +196,7 @@ h1, h2, h3, h4 {
   background: var(--paper-raise);
   padding: 7px 13px;
   border-radius: 999px;
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--font-nunito), sans-serif;
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
@@ -210,17 +207,17 @@ h1, h2, h3, h4 {
 }
 
 .sr-tab.active {
-  background: var(--mustard);
-  color: var(--chalk-green-dark);
-  border-color: var(--mustard);
+  background: var(--chalk-green);
+  color: #fff;
+  border-color: var(--chalk-green);
 }
 
 /* ============================================================ */
 
 .sr-banner {
-  background: #FCEFD9;
-  border: 1px solid #EAD7A8;
-  border-radius: 12px;
+  background: #FFFBEB;
+  border: 1px solid var(--line);
+  border-radius: 16px;
   padding: 10px 12px;
   font-size: 13px;
   margin-bottom: 12px;
@@ -229,9 +226,9 @@ h1, h2, h3, h4 {
 }
 
 .sr-banner.ok {
-  background: #E7F0E5;
-  border-color: #C8DCC4;
-  color: #31502B;
+  background: #F0FDF4;
+  border-color: #BBF7D0;
+  color: #166534;
 }
 
 /* ============================================================ */
@@ -246,7 +243,7 @@ h1, h2, h3, h4 {
 }
 
 .sr-slot.mine {
-  background: #EEF4EE;
+  background: #F0FDF4;
 }
 
 .sr-slot-date {
@@ -303,13 +300,13 @@ h1, h2, h3, h4 {
 }
 
 .sr-chip-open {
-  background: #E4EFE0;
-  color: #3E6B34;
+  background: #DCFCE7;
+  color: #166534;
 }
 
 .sr-chip-filled {
-  background: #EFE6D6;
-  color: #8A6A1F;
+  background: #FEF3C7;
+  color: #854D0E;
 }
 
 .sr-chip-mine {
@@ -326,9 +323,9 @@ h1, h2, h3, h4 {
 
 .sr-btn {
   border: none;
-  border-radius: 9px;
+  border-radius: 12px;
   padding: 8px 12px;
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--font-nunito), sans-serif;
   font-weight: 600;
   font-size: 12.5px;
   cursor: pointer;
@@ -421,13 +418,13 @@ h1, h2, h3, h4 {
   flex: 1;
   background: var(--paper-raise);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 10px;
   text-align: center;
 }
 
 .sr-stat-num {
-  font-family: 'Baloo 2', sans-serif;
+  font-family: var(--font-fredoka), sans-serif;
   font-size: 20px;
   color: var(--chalk-green-dark);
   font-weight: 700;
@@ -451,19 +448,19 @@ h1, h2, h3, h4 {
 
 .sr-input {
   width: 100%;
-  font-family: 'Work Sans', sans-serif;
+  font-family: var(--font-nunito), sans-serif;
   font-size: 13.5px;
   padding: 8px 9px;
-  border-radius: 8px;
+  border-radius: 16px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--paper-raise);
   color: var(--ink);
 }
 
 .sr-input:focus {
   outline: none;
   border-color: var(--chalk-green);
-  box-shadow: 0 0 0 3px rgba(46, 74, 59, 0.12);
+  box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
 }
 
 .sr-input::placeholder {
@@ -509,11 +506,11 @@ h1, h2, h3, h4 {
 
 .sr-swap-req {
   border: 1px solid var(--line);
-  border-radius: 11px;
+  border-radius: 16px;
   padding: 9px 10px;
   margin-bottom: 8px;
   font-size: 12.5px;
-  background: #fff;
+  background: var(--paper-raise);
 }
 
 .sr-empty {
@@ -562,20 +559,20 @@ h1, h2, h3, h4 {
 }
 
 .sr-login-banner {
-  background: #E7F0E5;
-  border: 1px solid #C8DCC4;
-  border-radius: 12px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 16px;
   padding: 10px 12px;
   font-size: 13px;
-  color: #31502B;
+  color: #166534;
   font-weight: 500;
   margin-top: 12px;
 }
 
 .sr-login-banner.muted {
-  background: #FCF3E3;
-  border-color: #EAD7A8;
-  color: #7A5A16;
+  background: #FFFBEB;
+  border-color: var(--line);
+  color: #854D0E;
 }
 
 /* ============================================================ */

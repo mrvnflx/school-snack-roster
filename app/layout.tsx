@@ -1,7 +1,20 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { Fredoka, Nunito } from "next/font/google";
 import "./globals.css";
 import RegisterSW from "./register-sw";
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  variable: "--font-nunito",
+  display: "swap",
+});
+
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  variable: "--font-fredoka",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Snack Roster",
@@ -11,18 +24,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#2E4A3B",
+  themeColor: "#15803D",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" />
-      </head>
+    <html lang="en" className={`${nunito.variable} ${fredoka.variable}`}>
       <body>
         <div className="sr-app">
           {children}
