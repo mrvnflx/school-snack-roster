@@ -58,24 +58,24 @@ export default function RosterForms({
 
   return (
     <>
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>CSV import</div>
-        <p className="sr-muted" style={{ marginBottom: 10 }}>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 10 }}>CSV import</div>
+        <p className="muted" style={{ marginBottom: 10 }}>
           Columns: child_name, section_name, parent_phone. Parents must have
           logged in at least once (via OTP) for the link to resolve.
         </p>
-        <input type="file" accept=".csv" onChange={handleCsvUpload} className="sr-input" />
+        <input type="file" accept=".csv" onChange={handleCsvUpload} className="input" />
         {csvLog && (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {csvLog.map((l, i) => (
-              <li key={i} className="sr-muted" style={{ fontSize: "12px" }}>{l}</li>
+              <li key={i} className="muted" style={{ fontSize: "12px" }}>{l}</li>
             ))}
           </ul>
         )}
       </div>
 
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>Add child manually</div>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 10 }}>Add child manually</div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -88,13 +88,13 @@ export default function RosterForms({
             value={childName}
             onChange={(e) => setChildName(e.target.value)}
             placeholder="Child's name"
-            className="sr-input"
+            className="input"
             style={{ marginBottom: 8 }}
           />
           <select
             value={childSection}
             onChange={(e) => setChildSection(e.target.value)}
-            className="sr-select"
+            className="select"
             style={{ marginBottom: 8 }}
           >
             {sections.map((s) => (
@@ -104,15 +104,15 @@ export default function RosterForms({
           <button
             type="submit"
             disabled={pending}
-            className="sr-btn sr-btn-primary sr-btn-block"
+            className="btn btn-primary btn-block"
           >
             Add child
           </button>
         </form>
       </div>
 
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>Link parent to child</div>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 10 }}>Link parent to child</div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -129,13 +129,13 @@ export default function RosterForms({
             value={linkPhone}
             onChange={(e) => setLinkPhone(e.target.value)}
             placeholder="Parent phone (+91XXXXXXXXXX)"
-            className="sr-input"
+            className="input"
             style={{ marginBottom: 8 }}
           />
           <select
             value={linkChildId}
             onChange={(e) => setLinkChildId(e.target.value)}
-            className="sr-select"
+            className="select"
             style={{ marginBottom: 8 }}
           >
             {children.map((c) => (
@@ -145,7 +145,7 @@ export default function RosterForms({
           <button
             type="submit"
             disabled={pending}
-            className="sr-btn sr-btn-primary sr-btn-block"
+            className="btn btn-primary btn-block"
           >
             Link
           </button>
@@ -155,8 +155,8 @@ export default function RosterForms({
         </form>
       </div>
 
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 10 }}>
           All children ({children.length})
         </div>
         {Object.entries(
@@ -170,12 +170,12 @@ export default function RosterForms({
           )
         ).map(([section, sectionChildren]) => (
           <div key={section}>
-            <div className="sr-section-title-light">{section}</div>
+            <div className="section-title-light">{section}</div>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: "200px", overflowY: "auto" }}>
               {sectionChildren.map((c) => (
                 <li
                   key={c.id}
-                  className="sr-defaulter"
+                  className="defaulter"
                   style={{ borderBottom: "1px solid var(--line)" }}
                 >
                   <span>{c.name}</span>

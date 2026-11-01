@@ -48,9 +48,9 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
 
   return (
     <>
-      <div className="sr-top">
-        <div className="sr-brand">
-          <span className="sr-brand-dot" />
+      <div className="top">
+        <div className="brand">
+          <span className="dot" />
           <h1>Snack Roster</h1>
         </div>
       </div>
@@ -59,23 +59,23 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
         Sign in
       </h1>
 
-      <div className="sr-card">
+      <div className="card">
         {stage === "phone" && (
           <form onSubmit={sendCode}>
-            <label className="sr-label-small">Phone number</label>
+            <label className="small">Phone number</label>
             <input
               type="tel"
               required
               placeholder="+91XXXXXXXXXX"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="sr-input"
+              className="input"
             />
-            <div className="sr-row">
+            <div className="row">
               <button
                 type="submit"
                 disabled={loading}
-                className="sr-btn sr-btn-primary sr-btn-block"
+                className="btn btn-primary btn-block"
               >
                 {loading ? "Sending…" : "Send code"}
               </button>
@@ -85,7 +85,7 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
 
         {stage === "code" && (
           <form onSubmit={verifyCode}>
-            <p className="sr-muted" style={{ marginBottom: 10 }}>
+            <p className="muted" style={{ marginBottom: 10 }}>
               Enter the code sent to {phone}.
             </p>
             <input
@@ -95,13 +95,13 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
               placeholder="6-digit code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              className="sr-input"
+              className="input"
             />
-            <div className="sr-row">
+            <div className="row">
               <button
                 type="submit"
                 disabled={loading}
-                className="sr-btn sr-btn-primary sr-btn-block"
+                className="btn btn-primary btn-block"
               >
                 {loading ? "Verifying…" : "Verify & Log in"}
               </button>
@@ -117,7 +117,7 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
       </div>
 
       <p
-        className="sr-muted"
+        className="muted"
         style={isInMemoryMode ? {
           fontSize: "12px",
           textAlign: "center",

@@ -19,30 +19,30 @@ function ItemList({ menuId, items }: { menuId: string; items: MenuItem[] }) {
     <div>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {items.map((item) => (
-          <li key={item.id} className="sr-menu-item">
+          <li key={item.id} className="menu-item">
             <span>{item.name}</span>
             <button
               onClick={() => startTransition(() => { deleteMenuItem(item.id); })}
-              className="sr-btn sr-btn-coral sr-btn-sm"
+              className="btn btn-coral btn-sm"
             >
               Remove
             </button>
           </li>
         ))}
-        {items.length === 0 && <li className="sr-muted">No items yet.</li>}
+        {items.length === 0 && <li className="muted">No items yet.</li>}
       </ul>
-      <div className="sr-row">
+      <div className="row">
         <input
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="New item"
-          className="sr-input"
+          className="input"
           style={{ flex: 1 }}
         />
         <button
           disabled={pending}
-          className="sr-btn sr-btn-primary sr-btn-sm"
+          className="btn btn-primary btn-sm"
           onClick={(e) => {
             e.preventDefault();
             startTransition(() => { addMenuItem(menuId, name, items.length + 1); });
@@ -75,9 +75,9 @@ export default function MenuForms({
 
   return (
     <>
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>Global default menu</div>
-        <p className="sr-muted" style={{ marginBottom: 10 }}>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 10 }}>Global default menu</div>
+        <p className="muted" style={{ marginBottom: 10 }}>
           Used by any section without its own override.
         </p>
         {globalMenu ? (
@@ -86,25 +86,25 @@ export default function MenuForms({
           <button
             disabled={pending}
             onClick={() => startTransition(() => { ensureMenu(null); })}
-            className="sr-btn sr-btn-primary"
+            className="btn btn-primary"
           >
             Create global menu
           </button>
         )}
-        <p className="sr-banner" style={{ marginTop: 10 }}>
+        <p className="banner" style={{ marginTop: 10 }}>
           Sections without a custom menu automatically inherit this global list.
         </p>
       </div>
 
       {sectionMenus.map((m) => (
-        <div className="sr-card" key={m.id}>
+        <div className="card" key={m.id}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div className="sr-section-title" style={{ marginBottom: 0 }}>
+            <div className="section-title" style={{ marginBottom: 0 }}>
               {sections.find((s) => s.id === m.sectionId)?.name ?? "?"}
             </div>
             <button
               onClick={() => startTransition(() => { deleteSectionMenuOverride(m.id); })}
-              className="sr-btn sr-btn-ghost sr-btn-sm"
+              className="btn btn-ghost btn-sm"
               style={{ color: "var(--coral)" }}
             >
               Revert to global
@@ -115,19 +115,19 @@ export default function MenuForms({
       ))}
 
       {sectionsWithoutOverride.length > 0 && (
-        <div className="sr-card">
-          <div className="sr-section-title" style={{ marginBottom: 10 }}>Add section override</div>
+        <div className="card">
+          <div className="section-title" style={{ marginBottom: 10 }}>Add section override</div>
           <form
             onSubmit={(e) => {
               e.preventDefault();
               startTransition(() => { ensureMenu(overrideSection); });
             }}
           >
-            <div className="sr-row">
+            <div className="row">
               <select
                 value={overrideSection}
                 onChange={(e) => setOverrideSection(e.target.value)}
-                className="sr-select"
+                className="select"
                 style={{ flex: 1 }}
               >
                 {sectionsWithoutOverride.map((s) => (
@@ -137,7 +137,7 @@ export default function MenuForms({
               <button
                 type="submit"
                 disabled={pending}
-                className="sr-btn sr-btn-primary sr-btn-sm"
+                className="btn btn-primary btn-sm"
               >
                 Add override
               </button>

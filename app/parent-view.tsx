@@ -48,13 +48,13 @@ export default function ParentView({
   return (
     <>
       {/* Section tabs */}
-      <div className="sr-tabs">
+      <div className="tabs">
         {sections.map((s) => (
           <button
             key={s.id}
             type="button"
             onClick={() => setActiveSectionId(s.id)}
-            className={`sr-tab${s.id === activeSectionId ? " active" : ""}`}
+            className={`tab${s.id === activeSectionId ? " active" : ""}`}
           >
             {s.name}
             {!s.isMySection && <span style={{ marginLeft: 4 }}>👁</span>}
@@ -63,32 +63,32 @@ export default function ParentView({
       </div>
 
       {/* Section content */}
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 10 }}>
           {activeSection.name} — {monthStr}
         </div>
 
         {activeSection.isMySection && (
           <>
             {activeSection.hasSignedUp ? (
-              <div className="sr-banner ok">
+              <div className="banner ok">
                 You're all set for {activeSection.name} this month ✓
               </div>
             ) : (
-              <div className="sr-banner">
+              <div className="banner">
                 You haven't signed up for {activeSection.name} yet this month — pick an open date below.
               </div>
             )}
           </>
         )}
         {!activeSection.isMySection && (
-          <div className="sr-banner">
+          <div className="banner">
             Read-only view — your child isn't in this section.
           </div>
         )}
 
         {!activeSection.slots.length ? (
-          <div className="sr-empty">No schedule generated for this month yet.</div>
+          <div className="empty">No schedule generated for this month yet.</div>
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {activeSection.slots.map((slot) => (
@@ -107,14 +107,14 @@ export default function ParentView({
       </div>
 
       {/* Defaulters list for the active section, shown below the calendar */}
-      <div className="sr-card">
-        <div className="sr-section-title">Defaulters this month</div>
+      <div className="card">
+        <div className="section-title">Defaulters this month</div>
         {activeSection.defaulters.length === 0 ? (
-          <div className="sr-empty">No defaulters this month — everyone in {activeSection.name} is signed up.</div>
+          <div className="empty">No defaulters this month — everyone in {activeSection.name} is signed up.</div>
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {activeSection.defaulters.map((d, i) => (
-              <li key={i} className="sr-defaulter">
+              <li key={i} className="defaulter">
                 <span>{d.parent}</span>
               </li>
             ))}

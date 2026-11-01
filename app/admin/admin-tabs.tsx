@@ -20,12 +20,12 @@ export default function AdminTabs({
   ];
 
   return (
-    <div className="sr-tabs">
+    <div className="tabs">
       {tabs.map((tab) => (
         <Link
           key={tab.label}
           href={tab.href}
-          className={`sr-tab${activeHref === tab.href ? " active" : ""}`}
+          className={`tab${activeHref === tab.href ? " active" : ""}`}
           style={{ textDecoration: "none" }}
         >
           {tab.label}

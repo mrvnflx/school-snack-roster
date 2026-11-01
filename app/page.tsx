@@ -71,24 +71,24 @@ export default async function Home() {
 
   return (
     <>
-      <div className="sr-top">
-        <div className="sr-brand">
-          <span className="sr-brand-dot" />
+      <div className="top">
+        <div className="brand">
+          <span className="dot" />
           <h1>Snack Roster</h1>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
           {profile?.role === "admin" && (
-            <Link href="/admin" className="sr-btn-ghost">
+            <Link href="/admin" className="btn-ghost">
               Admin
             </Link>
           )}
-          <Link href="/proto" className="sr-btn-ghost">
+          <Link href="/proto" className="btn-ghost">
             Proto
           </Link>
         </div>
       </div>
 
-      <p className="sr-muted" style={{ marginBottom: 14 }}>
+      <p className="muted" style={{ marginBottom: 14 }}>
         {profile?.fullName || user!.phone} — pick a section to view its calendar.
       </p>
 

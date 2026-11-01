@@ -22,7 +22,7 @@ export default function GenerateButton({
           generateScheduleForSection(sectionId, year, month);
         })
       }
-      className="sr-btn sr-btn-primary sr-btn-sm"
+      className="btn btn-primary btn-sm"
     >
       {pending ? "…" : "Generate"}
     </button>

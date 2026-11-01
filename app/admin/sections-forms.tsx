@@ -12,13 +12,13 @@ export default function SectionsForms({
   const [sectionName, setSectionName] = useState("");
 
   return (
-    <div className="sr-card">
-      <div className="sr-section-title" style={{ marginBottom: 10 }}>Sections</div>
+    <div className="card">
+      <div className="section-title" style={{ marginBottom: 10 }}>Sections</div>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {sections.map((s) => (
           <li
             key={s.id}
-            className="sr-defaulter"
+            className="defaulter"
             style={{ borderBottom: "1px solid var(--line)" }}
           >
             {s.name}
@@ -35,19 +35,19 @@ export default function SectionsForms({
         }}
         style={{ marginTop: 10 }}
       >
-        <div className="sr-row">
+        <div className="row">
           <input
             required
             value={sectionName}
             onChange={(e) => setSectionName(e.target.value)}
             placeholder="New section name"
-            className="sr-input"
+            className="input"
             style={{ flex: 1 }}
           />
           <button
             type="submit"
             disabled={pending}
-            className="sr-btn sr-btn-primary sr-btn-sm"
+            className="btn btn-primary btn-sm"
           >
             Add
           </button>

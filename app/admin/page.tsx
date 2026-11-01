@@ -26,32 +26,32 @@ export default async function AdminDashboard() {
 
   return (
     <AdminLayout activeHref="/admin">
-      <div className="sr-card">
-        <div className="sr-section-title">
+      <div className="card">
+        <div className="section-title">
           Schedule auto-generated for September 2026
         </div>
         {/* Stats */}
-        <div className="sr-stat-row">
+        <div className="stat-row">
           {sectionStats.map((s) => (
-            <div className="sr-stat" key={s.id}>
-              <div className="sr-stat-num">{s.filled}/{s.total}</div>
-              <div className="sr-stat-lbl">{s.name}</div>
+            <div className="stat" key={s.id}>
+              <div className="stat-num">{s.filled}/{s.total}</div>
+              <div className="stat-lbl">{s.name}</div>
             </div>
           ))}
         </div>
 
-        <p className="sr-muted" style={{ fontSize: "12px", marginBottom: 10 }}>
+        <p className="muted" style={{ fontSize: "12px", marginBottom: 10 }}>
           Weekdays only. No manual drafting needed.
         </p>
       </div>
 
       {/* Section generation cards */}
       {sectionStats.map((s) => (
-        <div className="sr-card" key={s.id}>
+        <div className="card" key={s.id}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <div className="sr-section-title" style={{ marginBottom: 0 }}>{s.name}</div>
-              <div className="sr-muted" style={{ fontSize: "12px" }}>
+              <div className="section-title" style={{ marginBottom: 0 }}>{s.name}</div>
+              <div className="muted" style={{ fontSize: "12px" }}>
                 {s.generated ? `${s.filled} of ${s.total} slots filled` : "No schedule yet"}
               </div>
             </div>
@@ -64,8 +64,8 @@ export default async function AdminDashboard() {
       <SectionsForms sections={sections} />
 
       {/* Quick link to full defaulters list */}
-      <div className="sr-banner" style={{ marginTop: 10 }}>
-        <Link href="/admin/defaulters" className="sr-link">
+      <div className="banner" style={{ marginTop: 10 }}>
+        <Link href="/admin/defaulters" className="link">
           View full defaulters list
         </Link>
       </div>

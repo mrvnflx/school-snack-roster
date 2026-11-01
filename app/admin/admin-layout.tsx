@@ -20,12 +20,12 @@ export default function AdminLayout({
 }) {
   return (
     <>
-      <div className="sr-top">
-        <div className="sr-brand">
-          <span className="sr-brand-dot" />
+      <div className="top">
+        <div className="brand">
+          <span className="dot" />
           <h1>Snack Roster</h1>
         </div>
-        <Link href="/" className="sr-btn-ghost">
+        <Link href="/" className="btn-ghost">
           Parent
         </Link>
       </div>

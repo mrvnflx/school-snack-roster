@@ -68,26 +68,26 @@ export default function SlotRow({
   }
 
   return (
-    <div className="sr-slot">
-      <span className="sr-slot-date">{weekday}<br />{date}</span>
-      <div className="sr-slot-info">
+    <div className="slot">
+      <span className="date">{weekday}<br />{date}</span>
+      <div className="info">
         {slot.status === "filled" ? (
-          <span className="sr-slot-info-name">{slot.children?.name}</span>
+          <span className="name">{slot.children?.name}</span>
         ) : (
-          <span className="sr-muted">Open slot</span>
+          <span className="muted">Open slot</span>
         )}
         {slot.status === "filled" && slot.menu_items && (
-          <span className="sr-slot-info-item">{slot.menu_items.name}</span>
+          <span className="item">{slot.menu_items.name}</span>
         )}
         {isMine && slot.status === "filled" && (
-          <span className="sr-chip sr-chip-mine" style={{ marginLeft: 6, fontSize: 10 }}>You</span>
+          <span className="chip chip-mine" style={{ marginLeft: 6, fontSize: 10 }}>You</span>
         )}
       </div>
       {isMine && slot.status === "filled" && (
         <button
           onClick={submitCancel}
           disabled={pending}
-          className="sr-btn sr-btn-secondary sr-btn-sm"
+          className="btn btn-secondary btn-sm"
         >
           {pending ? "Saving…" : "Cancel"}
         </button>
@@ -95,7 +95,7 @@ export default function SlotRow({
       {!isMine && slot.status === "open" && isMySection && myChildren.length > 0 && (
         <button
           onClick={() => setOpen(!open)}
-          className="sr-btn sr-btn-primary sr-btn-sm"
+          className="btn btn-primary btn-sm"
         >
           {open ? "Close" : "Sign up"}
         </button>
@@ -103,24 +103,24 @@ export default function SlotRow({
       {!isMine && slot.status === "filled" && isMySection && (
         <button
           onClick={() => setOpen(!open)}
-          className="sr-btn sr-btn-secondary sr-btn-sm"
+          className="btn btn-secondary btn-sm"
         >
           {open ? "Close" : "Request swap"}
         </button>
       )}
       {!isMySection && slot.status === "filled" && (
-        <span className="sr-chip sr-chip-filled">Filled</span>
+        <span className="chip chip-filled">Filled</span>
       )}
       {!isMySection && slot.status === "open" && (
-        <span className="sr-chip sr-chip-open">Open</span>
+        <span className="chip chip-open">Open</span>
       )}
 
       {open && slot.status === "open" && (
-        <div className="sr-row">
+        <div className="row">
           <select
             value={childId}
             onChange={(e) => setChildId(e.target.value)}
-            className="sr-input"
+            className="input"
           >
             {myChildren.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
@@ -129,7 +129,7 @@ export default function SlotRow({
           <select
             value={menuItemId}
             onChange={(e) => setMenuItemId(e.target.value)}
-            className="sr-input"
+            className="input"
           >
             {menuItems.map((m) => (
               <option key={m.id} value={m.id}>{m.name}</option>
@@ -138,7 +138,7 @@ export default function SlotRow({
           <button
             onClick={submitSignup}
             disabled={pending}
-            className="sr-btn sr-btn-primary sr-btn-block"
+            className="btn btn-primary btn-block"
           >
             {pending ? "Saving…" : "Confirm sign-up"}
           </button>
@@ -146,18 +146,18 @@ export default function SlotRow({
       )}
 
       {open && slot.status === "filled" && !isMine && isMySection && (
-        <div className="sr-row">
+        <div className="row">
           <button
             onClick={submitSwap}
             disabled={pending}
-            className="sr-btn sr-btn-primary sr-btn-block"
+            className="btn btn-primary btn-block"
           >
             {pending ? "Sending…" : "Send swap request"}
           </button>
         </div>
       )}
 
-      {error && <p className="sr-muted" style={{ marginTop: 6 }}>{error}</p>}
+      {error && <p className="muted" style={{ marginTop: 6 }}>{error}</p>}
     </div>
   );
 }

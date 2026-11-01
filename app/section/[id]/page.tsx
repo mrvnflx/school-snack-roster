@@ -42,12 +42,12 @@ export default async function SectionPage({
 
   return (
     <>
-      <Link href="/" className="sr-link-return">
+      <Link href="/" className="link-return">
         ← All sections
       </Link>
 
       <h1 style={{ fontSize: "22px", marginBottom: 2 }}>{section.name}</h1>
-      <p className="sr-muted" style={{ marginBottom: 14 }}>
+      <p className="muted" style={{ marginBottom: 14 }}>
         September 2026
         {!hasSignedUp && myChildInThisSection && (
           <> — you haven&apos;t signed up yet</>
@@ -55,25 +55,25 @@ export default async function SectionPage({
       </p>
 
       {!slots.length ? (
-        <div className="sr-card">
-          <p className="sr-muted">No schedule generated for this month yet.</p>
+        <div className="card">
+          <p className="muted">No schedule generated for this month yet.</p>
         </div>
       ) : (
-        <div className="sr-card">
-          <div className="sr-section-title">{section.name} — September 2026</div>
+        <div className="card">
+          <div className="section-title">{section.name} — September 2026</div>
 
           {hasSignedUp && myChildInThisSection && (
-            <div className="sr-banner ok">
+            <div className="banner ok">
               You&apos;re all set for {section.name} this month ✓
             </div>
           )}
           {!hasSignedUp && myChildInThisSection && (
-            <div className="sr-banner">
+            <div className="banner">
               You haven&apos;t signed up for {section.name} yet this month — pick an open date below.
             </div>
           )}
           {!myChildInThisSection && (
-            <div className="sr-banner">
+            <div className="banner">
               Read-only view — your child isn&apos;t in this section.
             </div>
           )}

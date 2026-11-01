@@ -22,18 +22,18 @@ export default function SetupForms({
 
   return (
     <>
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>Holiday calendar</div>
-        <p className="sr-muted" style={{ fontSize: "12px", marginBottom: 8 }}>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 10 }}>Holiday calendar</div>
+        <p className="muted" style={{ fontSize: "12px", marginBottom: 8 }}>
           Academic year: {currentAcademicYear}
         </p>
         <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: "160px", overflowY: "auto" }}>
           {holidays.map((h) => (
-            <li key={h.id} className="sr-defaulter" style={{ borderBottom: "1px solid var(--line)" }}>
+            <li key={h.id} className="defaulter" style={{ borderBottom: "1px solid var(--line)" }}>
               {h.date} — {h.name}
             </li>
           ))}
-          {holidays.length === 0 && <li className="sr-muted">No holidays added yet.</li>}
+          {holidays.length === 0 && <li className="muted">No holidays added yet.</li>}
         </ul>
         <form
           onSubmit={(e) => {
@@ -51,7 +51,7 @@ export default function SetupForms({
             type="date"
             value={holidayDate}
             onChange={(e) => setHolidayDate(e.target.value)}
-            className="sr-input"
+            className="input"
             style={{ marginBottom: 8 }}
           />
           <input
@@ -59,29 +59,29 @@ export default function SetupForms({
             value={holidayName}
             onChange={(e) => setHolidayName(e.target.value)}
             placeholder="Holiday name"
-            className="sr-input"
+            className="input"
             style={{ marginBottom: 8 }}
           />
           <button
             type="submit"
             disabled={pending}
-            className="sr-btn sr-btn-primary sr-btn-block"
+            className="btn btn-primary btn-block"
           >
             Add holiday
           </button>
         </form>
       </div>
 
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>Ad-hoc blackout days</div>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 10 }}>Ad-hoc blackout days</div>
         <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: "160px", overflowY: "auto" }}>
           {blackouts.map((b) => (
-            <li key={b.id} className="sr-defaulter" style={{ borderBottom: "1px solid var(--line)" }}>
+            <li key={b.id} className="defaulter" style={{ borderBottom: "1px solid var(--line)" }}>
               <span>{b.date}</span>
-              <span className="sr-muted">— {b.reason} {b.sectionId ? "" : "(all sections)"}</span>
+              <span className="muted">— {b.reason} {b.sectionId ? "" : "(all sections)"}</span>
             </li>
           ))}
-          {blackouts.length === 0 && <li className="sr-muted">No blackout days added yet.</li>}
+          {blackouts.length === 0 && <li className="muted">No blackout days added yet.</li>}
         </ul>
         <form
           onSubmit={(e) => {
@@ -99,7 +99,7 @@ export default function SetupForms({
             type="date"
             value={blackoutDate}
             onChange={(e) => setBlackoutDate(e.target.value)}
-            className="sr-input"
+            className="input"
             style={{ marginBottom: 8 }}
           />
           <input
@@ -107,13 +107,13 @@ export default function SetupForms({
             value={blackoutReason}
             onChange={(e) => setBlackoutReason(e.target.value)}
             placeholder="Reason (e.g. Sports Day)"
-            className="sr-input"
+            className="input"
             style={{ marginBottom: 8 }}
           />
           <select
             value={blackoutSection}
             onChange={(e) => setBlackoutSection(e.target.value)}
-            className="sr-select"
+            className="select"
             style={{ marginBottom: 8 }}
           >
             <option value="">All sections</option>
@@ -124,12 +124,12 @@ export default function SetupForms({
           <button
             type="submit"
             disabled={pending}
-            className="sr-btn sr-btn-primary sr-btn-block"
+            className="btn btn-primary btn-block"
           >
             Add blackout day
           </button>
         </form>
-        <p className="sr-banner" style={{ marginTop: 10 }}>
+        <p className="banner" style={{ marginTop: 10 }}>
           Blackout days close sign-ups for that date across all sections, on top of the academic-year holiday calendar.
         </p>
       </div>

@@ -18,11 +18,11 @@ export default async function DefaultersPage() {
 
   return (
     <AdminLayout activeHref="/admin/defaulters">
-      <div className="sr-card">
-        <div className="sr-section-title">Not yet signed up this month</div>
+      <div className="card">
+        <div className="section-title">Not yet signed up this month</div>
 
         {defaulters.length === 0 && (
-          <div className="sr-empty">No defaulters this month — everyone is signed up.</div>
+          <div className="empty">No defaulters this month — everyone is signed up.</div>
         )}
 
         {Object.entries(
@@ -34,11 +34,11 @@ export default async function DefaultersPage() {
             {}
           )
         ).map(([section, parents]) => (
-          <div className="sr-card" key={section}>
-            <div className="sr-section-title">{section}</div>
+          <div className="card" key={section}>
+            <div className="section-title">{section}</div>
             <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
               {parents.map((p, i) => (
-                <li key={i} className="sr-defaulter">
+                <li key={i} className="defaulter">
                   <span>{p}</span>
                 </li>
               ))}
@@ -46,7 +46,7 @@ export default async function DefaultersPage() {
           </div>
         ))}
 
-        <div className="sr-banner" style={{ marginTop: 10 }}>
+        <div className="banner" style={{ marginTop: 10 }}>
           Reminders: daily from 5 days before month start, continuing 3 days
           into the month. After that, parents land here for manual follow-up.
         </div>
