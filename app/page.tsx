@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireUser, getCurrentYearMonth, mapToSlotRowSlot } from "@/lib/admin-helpers";
+import { requireUser, getCurrentYearMonth, mapToSlotRowSlot, computeDefaulters, DefaultersSlot } from "@/lib/admin-helpers";
 import type { Child } from "@/lib/slot-utils";
 import type { SlotWithDetails } from "@/lib/db/types";
 import ParentView from "@/app/parent-view";
@@ -48,6 +48,27 @@ export default async function Home() {
     })
   );
 
+  // Flatten slots (with sectionId) so we can compute per-section defaulters.
+  const flatSlots: DefaultersSlot[] = sectionData.flatMap((s) =>
+    s.slots.map((slot) => ({
+      sectionId: s.id,
+      parentId: slot.parent_id,
+    }))
+  );
+
+  // Per-section defaulters (parents in each section who haven't signed up yet).
+  const allDefaulters = await computeDefaulters(db, sections, flatSlots);
+
+  const defaultersBySection = new Map<string, { parent: string; section: string }[]>();
+  for (const section of sections) {
+    defaultersBySection.set(section.id, allDefaulters.filter((d) => d.section === section.name));
+  }
+
+  const sectionDataWithDefaulters = sectionData.map((s) => ({
+    ...s,
+    defaulters: defaultersBySection.get(s.id) ?? [],
+  }));
+
   return (
     <>
       <div className="sr-top">
@@ -72,7 +93,7 @@ export default async function Home() {
       </p>
 
       <ParentView
-        sections={sectionData}
+        sections={sectionDataWithDefaulters}
         currentUserId={user!.id}
         year={year}
         month={month}
