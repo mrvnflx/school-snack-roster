@@ -59,65 +59,66 @@ export default function ParentView({
         onSelect={setActiveSectionId}
       />
 
-      {/* Section content */}
-      <Card>
-        <SectionTitle>
-          {activeSection.name} — {monthStr}
-        </SectionTitle>
+      <div className="sr-parent-grid">
+        <Card>
+          <SectionTitle>
+            {activeSection.name} — {monthStr}
+          </SectionTitle>
 
-        {activeSection.isMySection && (
-          <>
-            {activeSection.hasSignedUp ? (
-              <Banner tone="success">
-                You&apos;re all set for {activeSection.name} this month ✓
-              </Banner>
-            ) : (
-              <Banner>
-                You haven&apos;t signed up for {activeSection.name} yet this month — pick an open date below.
-              </Banner>
-            )}
-          </>
-        )}
-        {!activeSection.isMySection && (
-          <Banner>
-            Read-only view — your child isn&apos;t in this section.
-          </Banner>
-        )}
+          {activeSection.isMySection && (
+            <>
+              {activeSection.hasSignedUp ? (
+                <Banner tone="success">
+                  You&apos;re all set for {activeSection.name} this month ✓
+                </Banner>
+              ) : (
+                <Banner>
+                  You haven&apos;t signed up for {activeSection.name} yet this month — pick an open date below.
+                </Banner>
+              )}
+            </>
+          )}
+          {!activeSection.isMySection && (
+            <Banner>
+              Read-only view — your child isn&apos;t in this section.
+            </Banner>
+          )}
 
-        {!activeSection.slots.length ? (
-          <div className="sr-empty">No schedule generated for this month yet.</div>
-        ) : (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {activeSection.slots.map((slot) => (
-              <SlotRow
-                key={slot.id}
-                slot={slot}
-                myChildren={activeSection.myChildren}
-                menuItems={activeSection.menuItems}
-                currentUserId={currentUserId}
-                allSlots={activeSection.slots}
-                isMySection={activeSection.isMySection}
-              />
-            ))}
-          </ul>
-        )}
-      </Card>
+          {!activeSection.slots.length ? (
+            <div className="sr-empty">No schedule generated for this month yet.</div>
+          ) : (
+            <ul className="sr-list">
+              {activeSection.slots.map((slot) => (
+                <li key={slot.id}>
+                  <SlotRow
+                    slot={slot}
+                    myChildren={activeSection.myChildren}
+                    menuItems={activeSection.menuItems}
+                    currentUserId={currentUserId}
+                    allSlots={activeSection.slots}
+                    isMySection={activeSection.isMySection}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
 
-      {/* Defaulters list for the active section, shown below the calendar */}
-      <Card>
-        <SectionTitle>Defaulters this month</SectionTitle>
-        {activeSection.defaulters.length === 0 ? (
-          <div className="sr-empty">No defaulters this month — everyone in {activeSection.name} is signed up.</div>
-        ) : (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {activeSection.defaulters.map((d, i) => (
-              <li key={i} className="sr-defaulter">
-                <span>{d.parent}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+        <Card>
+          <SectionTitle>Defaulters this month</SectionTitle>
+          {activeSection.defaulters.length === 0 ? (
+            <div className="sr-empty">No defaulters this month — everyone in {activeSection.name} is signed up.</div>
+          ) : (
+            <ul className="sr-list">
+              {activeSection.defaulters.map((d, i) => (
+                <li key={i} className="sr-defaulter">
+                  <span>{d.parent}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
     </>
   );
 }

@@ -65,7 +65,7 @@ h1, h2, h3, h4 {
 
 .sr-app {
   width: 100%;
-  max-width: 440px;
+  max-width: 1280px;
   min-height: 100vh;
   background: transparent;
   padding: 14px 14px 40px;
@@ -133,6 +133,26 @@ h1, h2, h3, h4 {
   border-radius: 14px;
   padding: 14px;
   margin-bottom: 12px;
+}
+
+.sr-parent-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.sr-demo-parent-controls {
+  max-width: 440px;
+}
+
+.sr-admin-section-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.sr-parent-grid > .sr-card,
+.sr-admin-section-grid > .sr-card,
+.sr-admin-section-grid > div.sr-card {
+  margin-bottom: 0;
 }
 
 .sr-select {
@@ -565,5 +585,22 @@ h1, h2, h3, h4 {
 @supports (padding-top: env(safe-area-inset-top)) {
   .sr-top {
     padding-top: env(safe-area-inset-top);
+  }
+}
+
+@media (min-width: 768px) {
+  .sr-app {
+    padding: 28px clamp(24px, 4vw, 48px) 48px;
+  }
+
+  .sr-parent-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+    align-items: start;
+    gap: 20px;
+  }
+
+  .sr-admin-section-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: 16px;
   }
 }
