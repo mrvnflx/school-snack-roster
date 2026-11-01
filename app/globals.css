@@ -188,7 +188,7 @@ label.small {
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.tabs button.active {
+.tab.active {
   background: var(--mustard);
   color: var(--chalk-green-dark);
   border-color: var(--mustard);
