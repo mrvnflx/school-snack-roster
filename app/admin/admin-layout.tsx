@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import AdminTabs from "./admin-tabs";
+import { BrandHeader } from "@/components/design-system";
 
 /** Shared admin layout: top bar + tab bar + content wrapper.
  * Eliminates the duplicated auth guard + top bar across admin sub-pages.
@@ -20,15 +21,13 @@ export default function AdminLayout({
 }) {
   return (
     <>
-      <div className="sr-top">
-        <div className="sr-brand">
-          <span className="sr-brand-dot" />
-          <h1>Snack Roster</h1>
-        </div>
-        <Link href="/" className="sr-btn-ghost">
-          Parent
-        </Link>
-      </div>
+      <BrandHeader
+        actions={
+          <Link href="/" className="sr-btn-ghost">
+            Parent
+          </Link>
+        }
+      />
       <AdminTabs activeHref={activeHref} />
       {children}
     </>

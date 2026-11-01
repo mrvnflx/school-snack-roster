@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { signUpForSlot, cancelSignUp, requestSwap } from "@/lib/actions";
 import type { Child, SlotRowSlot } from "@/lib/slot-utils";
+import { RosterSlot } from "@/components/design-system";
 
 type MenuItem = { id: string; name: string };
 
@@ -29,14 +30,6 @@ export default function SlotRow({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const weekday = new Date(slot.date + "T00:00:00").toLocaleDateString(
-    "en-US",
-    { weekday: "short" }
-  );
-  const date = new Date(slot.date + "T00:00:00").toLocaleDateString(
-    "en-US",
-    { month: "short", day: "numeric" }
-  );
   const isMine = slot.parent_id === currentUserId;
 
   function submitSignup() {
@@ -67,22 +60,8 @@ export default function SlotRow({
     });
   }
 
-  return (
-    <div className="sr-slot">
-      <span className="sr-slot-date">{weekday}<br />{date}</span>
-      <div className="sr-slot-info">
-        {slot.status === "filled" ? (
-          <span className="sr-slot-info-name">{slot.children?.name}</span>
-        ) : (
-          <span className="sr-muted">Open slot</span>
-        )}
-        {slot.status === "filled" && slot.menu_items && (
-          <span className="sr-slot-info-item">{slot.menu_items.name}</span>
-        )}
-        {isMine && slot.status === "filled" && (
-          <span className="sr-chip sr-chip-mine" style={{ marginLeft: 6, fontSize: 10 }}>You</span>
-        )}
-      </div>
+  const actions = (
+    <>
       {isMine && slot.status === "filled" && (
         <button
           onClick={submitCancel}
@@ -114,7 +93,18 @@ export default function SlotRow({
       {!isMySection && slot.status === "open" && (
         <span className="sr-chip sr-chip-open">Open</span>
       )}
+    </>
+  );
 
+  return (
+    <RosterSlot
+      date={slot.date}
+      status={slot.status === "filled" ? "filled" : "open"}
+      childName={slot.children?.name}
+      menuItem={slot.menu_items?.name}
+      isMine={isMine}
+      actions={actions}
+    >
       {open && slot.status === "open" && (
         <div className="sr-row">
           <select
@@ -158,6 +148,6 @@ export default function SlotRow({
       )}
 
       {error && <p className="sr-muted" style={{ marginTop: 6 }}>{error}</p>}
-    </div>
+    </RosterSlot>
   );
 }

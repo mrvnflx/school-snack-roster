@@ -1,12 +1,11 @@
-import { spawn, execSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { writeFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { beforeAll, afterAll, test, expect } from "vitest";
 
 /**
- * Integration test: the home page must link to the /proto page in the top-right
- * bar (next to the Admin role link). Verified against a live Next.js dev server
- * running in in-memory mode so no external Supabase credentials are required.
+ * Integration tests verify the home-page demo link and the shared-components
+ * demo route against a live Next.js server without external Supabase credentials.
  */
 
 const PORT = 4197;
@@ -43,13 +42,6 @@ async function fetchHtml(path: string): Promise<string> {
 }
 
 beforeAll(async () => {
-  // public/proto/ is git-ignored and copied from prototype/ at build time;
-  // ensure it exists before starting the server so /proto is served in dev.
-  execSync("node scripts/copy-proto.js", {
-    cwd: process.cwd(),
-    stdio: "pipe",
-  });
-
   mkdirSync(join(process.cwd(), "tests"), { recursive: true });
   writeFileSync(LOG, `vitest next dev log @ ${new Date().toISOString()}\n`);
 
@@ -111,8 +103,11 @@ test("/proto link appears alongside the Admin role link (next to the toggle)", a
   expect(protoIdx).toBeGreaterThan(adminIdx);
 });
 
-test("/proto route is reachable and serves the prototype page", async () => {
+test("/proto renders the interactive demo using shared app components", async () => {
   const html = await fetchHtml("/proto");
   expect(html).toContain("Snack Roster");
-  expect(html).toContain("role-toggle");
+  expect(html).toContain("Demo mode");
+  expect(html).toContain("Demo role");
+  expect(html).toContain("sr-card");
+  expect(html).toContain("September 2026");
 });

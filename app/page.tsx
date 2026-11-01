@@ -3,6 +3,7 @@ import { requireUser, getCurrentYearMonth, mapToSlotRowSlot, computeDefaulters, 
 import type { Child } from "@/lib/slot-utils";
 import type { SlotWithDetails } from "@/lib/db/types";
 import ParentView from "@/app/parent-view";
+import { BrandHeader } from "@/components/design-system";
 
 export default async function Home() {
   const { db, user, profile } = await requireUser();
@@ -71,22 +72,20 @@ export default async function Home() {
 
   return (
     <>
-      <div className="sr-top">
-        <div className="sr-brand">
-          <span className="sr-brand-dot" />
-          <h1>Snack Roster</h1>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {profile?.role === "admin" && (
-            <Link href="/admin" className="sr-btn-ghost">
-              Admin
+      <BrandHeader
+        actions={
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            {profile?.role === "admin" && (
+              <Link href="/admin" className="sr-btn-ghost">
+                Admin
+              </Link>
+            )}
+            <Link href="/proto" className="sr-btn-ghost">
+              Proto
             </Link>
-          )}
-          <Link href="/proto" className="sr-btn-ghost">
-            Proto
-          </Link>
-        </div>
-      </div>
+          </div>
+        }
+      />
 
       <p className="sr-muted" style={{ marginBottom: 14 }}>
         {profile?.fullName || user!.phone} — pick a section to view its calendar.

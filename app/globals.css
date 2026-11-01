@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ============================================================
- * Snack Roster — design tokens (matches prototype)
+ * Snack Roster — shared design tokens
  * ============================================================ */
 
 :root {
@@ -185,6 +185,7 @@ h1, h2, h3, h4 {
   cursor: pointer;
   color: var(--ink-soft);
   white-space: nowrap;
+  text-decoration: none;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
@@ -251,6 +252,19 @@ h1, h2, h3, h4 {
 .sr-slot-info-item {
   font-size: 12px;
   color: var(--ink-soft);
+}
+
+.sr-slot-info .sr-chip-mine {
+  margin-left: 6px;
+  font-size: 10px;
+  align-self: flex-start;
+}
+
+.sr-slot-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
 .sr-muted {
@@ -487,6 +501,12 @@ h1, h2, h3, h4 {
   color: var(--ink-soft);
   font-size: 13px;
   padding: 16px 0;
+}
+
+.sr-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .sr-divider {

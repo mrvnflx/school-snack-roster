@@ -7,8 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "copy-proto": "node scripts/copy-proto.js",
-    "prebuild": "node scripts/copy-proto.js",
     "test": "vitest run"
   },
   "dependencies": {
