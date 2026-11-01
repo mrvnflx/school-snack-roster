@@ -219,17 +219,20 @@ label.small {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   padding: 11px 12px;
-  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
   background: var(--paper-raise);
 }
 
 .slot.mine {
+  border-color: var(--chalk-green);
   background: #EEF4EE;
 }
 
 .slot .date {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   width: 52px;
   color: var(--chalk-green-dark);
@@ -241,6 +244,7 @@ label.small {
 }
 
 .slot .info .name {
+  font-size: 13.5px;
   font-weight: 600;
 }
 
