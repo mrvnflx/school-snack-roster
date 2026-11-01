@@ -448,6 +448,27 @@ function renderParent(){
   });
   wrap.appendChild(listCard);
 
+  // Defaulters for the active section: only parents who have a child in this
+  // section are candidates, then flag those who haven't signed up yet. (Mirrors
+  // the main app's per-section defaulter logic.)
+  const sectionChildren = state.children.filter((c) => c.section === ui.section);
+  const sectionParents = new Set(sectionChildren.map((c) => c.parentId));
+  const sectionDefaulters = state.parents.filter(
+    (p) => sectionParents.has(p.id) && !hasSignedUp(p.id, ui.section)
+  );
+  if (sectionDefaulters.length > 0) {
+    const defCard = el('div', 'card');
+    defCard.appendChild(el('div', 'section-title', 'Defaulters this month'));
+    sectionDefaulters.forEach((p) => {
+      defCard.appendChild(
+        el('div', 'defaulter', `<span>${p.name}</span><span class="chip open">${ui.section}</span>`)
+      );
+    });
+    wrap.appendChild(defCard);
+  } else {
+    wrap.appendChild(el('div', 'empty', `No defaulters this month — everyone in ${ui.section} is signed up.`));
+  }
+
   return wrap;
 }
 

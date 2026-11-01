@@ -13,6 +13,7 @@ type SectionData = {
   myChildren: Child[];
   hasSignedUp: boolean;
   isMySection: boolean;
+  defaulters: { parent: string; section: string }[];
 };
 
 function monthLabel(year: number, month: number): string {
@@ -100,6 +101,22 @@ export default function ParentView({
                 allSlots={activeSection.slots}
                 isMySection={activeSection.isMySection}
               />
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Defaulters list for the active section, shown below the calendar */}
+      <div className="sr-card">
+        <div className="sr-section-title">Defaulters this month</div>
+        {activeSection.defaulters.length === 0 ? (
+          <div className="sr-empty">No defaulters this month — everyone in {activeSection.name} is signed up.</div>
+        ) : (
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {activeSection.defaulters.map((d, i) => (
+              <li key={i} className="sr-defaulter">
+                <span>{d.parent}</span>
+              </li>
             ))}
           </ul>
         )}

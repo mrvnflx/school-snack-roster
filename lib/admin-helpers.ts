@@ -36,14 +36,26 @@ export function mapToSlotRowSlot(slot: SlotWithDetails): SlotRowSlot {
   };
 }
 
+/** Minimal slot shape needed to compute the defaulters list. */
+export type DefaultersSlot = {
+  sectionId: string;
+  parentId: string | null;
+};
+
 export async function computeDefaulters(
   db: Db,
   sections: { id: string; name: string }[],
-  flatSlots: SlotWithDetails[]
+  flatSlots: DefaultersSlot[],
+  sectionId?: string | null
 ): Promise<{ parent: string; section: string }[]> {
+  // Scope to one environment/section when a sectionId is given.
+  const slots = sectionId
+    ? flatSlots.filter((slot) => slot.sectionId === sectionId)
+    : flatSlots;
+
   // Build a set of parent+section pairs that have at least one filled slot this month
   const filledBySectionParent = new Set(
-    flatSlots
+    slots
       .filter((slot) => slot.parentId !== null)
       .map((slot) => `${slot.sectionId}:${slot.parentId}`)
   );
@@ -57,6 +69,7 @@ export async function computeDefaulters(
 
   for (const { child, sectionName, parentId } of childrenWithSection as ChildWithSection[]) {
     if (!sectionName) continue;
+    if (sectionId != null && child.sectionId !== sectionId) continue;
     const parent = parentId ? allProfiles.find((p) => p.id === parentId) : undefined;
     if (!parent || parent.role !== "parent") continue;
 
