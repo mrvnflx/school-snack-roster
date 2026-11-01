@@ -23,7 +23,7 @@ function ItemList({ menuId, items }: { menuId: string; items: MenuItem[] }) {
             <span>{item.name}</span>
             <button
               onClick={() => startTransition(() => { deleteMenuItem(item.id); })}
-              className="btn btn-coral btn-sm"
+              className="btn btn-secondary btn-sm"
             >
               Remove
             </button>
