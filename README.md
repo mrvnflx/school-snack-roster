@@ -39,17 +39,17 @@ product requirements and decisions log.
 ```
 school-snack-roster/
 ├── app/              # Next.js App Router (all routes)
+├── components/       # Shared design-system components
 ├── lib/              # Server actions, DB layer, helpers
 ├── public/           # Static assets (favicon, icons, PWA manifest)
 ├── supabase/         # DB migrations + seed
-├── prototype/        # Clickable HTML prototype (source of truth)
 ├── docs/             # Product requirements
 └── middleware.ts     # Auth middleware
 ```
 
-The **prototype** lives in `prototype/` and is served at `/proto` by copying
-`prototype/index.html` → `public/proto/index.html` during build. Run
-`npm run copy-proto` once before `npm run dev` for local development.
+The stakeholder demo is available at `/proto`. It uses fixed mock data and the
+same React presentation components and global design tokens as the main app;
+demo actions never call production server actions or modify the roster.
 
 ## What's built (Phase 1–5 of the plan)
 - Full DB schema + RLS policies (`supabase/migrations/`)
@@ -100,8 +100,7 @@ npm run dev
 Push to a GitHub repo, import into Vercel, add the two env vars from
 `.env.local.example` in Vercel's project settings. No other config needed.
 
-> The `/proto` route is auto-generated during Vercel's build via the
-> `prebuild` npm hook — no additional Vercel configuration required.
+The `/proto` demo is part of the Next.js app and deploys with the other routes.
 
 ## Swapping in real SMS later
 Two independent things currently stubbed, both swappable without touching

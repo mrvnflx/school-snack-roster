@@ -1,6 +1,6 @@
-import Link from "next/link";
+import { Tabs } from "@/components/design-system";
 
-/** Shared admin tab bar — matches the prototype's tab set:
+/** Shared admin tab bar:
  *  Overview | Defaulters | Menu | Roster | Blackout days
  *
  * Note: Overview and Defaulters both render on the /admin dashboard.
@@ -20,17 +20,14 @@ export default function AdminTabs({
   ];
 
   return (
-    <div className="sr-tabs">
-      {tabs.map((tab) => (
-        <Link
-          key={tab.label}
-          href={tab.href}
-          className={`sr-tab${activeHref === tab.href ? " active" : ""}`}
-          style={{ textDecoration: "none" }}
-        >
-          {tab.label}
-        </Link>
-      ))}
-    </div>
+    <Tabs
+      ariaLabel="Admin sections"
+      items={tabs.map((tab) => ({
+        id: tab.href,
+        label: tab.label,
+        href: tab.href,
+      }))}
+      selectedId={activeHref}
+    />
   );
 }

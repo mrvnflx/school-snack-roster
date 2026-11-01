@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import SlotRow, { type SlotRowSlot, type Child } from "./section/[id]/slot-row";
+import { Banner, Card, SectionTitle, Tabs } from "@/components/design-system";
 
 type MenuOption = { id: string; name: string };
 
@@ -48,43 +49,39 @@ export default function ParentView({
   return (
     <>
       {/* Section tabs */}
-      <div className="sr-tabs">
-        {sections.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => setActiveSectionId(s.id)}
-            className={`sr-tab${s.id === activeSectionId ? " active" : ""}`}
-          >
-            {s.name}
-            {!s.isMySection && <span style={{ marginLeft: 4 }}>👁</span>}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        ariaLabel="Sections"
+        items={sections.map((section) => ({
+          id: section.id,
+          label: `${section.name}${section.isMySection ? "" : " 👁"}`,
+        }))}
+        selectedId={activeSectionId}
+        onSelect={setActiveSectionId}
+      />
 
       {/* Section content */}
-      <div className="sr-card">
-        <div className="sr-section-title" style={{ marginBottom: 10 }}>
+      <Card>
+        <SectionTitle>
           {activeSection.name} — {monthStr}
-        </div>
+        </SectionTitle>
 
         {activeSection.isMySection && (
           <>
             {activeSection.hasSignedUp ? (
-              <div className="sr-banner ok">
-                You're all set for {activeSection.name} this month ✓
-              </div>
+              <Banner tone="success">
+                You&apos;re all set for {activeSection.name} this month ✓
+              </Banner>
             ) : (
-              <div className="sr-banner">
-                You haven't signed up for {activeSection.name} yet this month — pick an open date below.
-              </div>
+              <Banner>
+                You haven&apos;t signed up for {activeSection.name} yet this month — pick an open date below.
+              </Banner>
             )}
           </>
         )}
         {!activeSection.isMySection && (
-          <div className="sr-banner">
-            Read-only view — your child isn't in this section.
-          </div>
+          <Banner>
+            Read-only view — your child isn&apos;t in this section.
+          </Banner>
         )}
 
         {!activeSection.slots.length ? (
@@ -104,11 +101,11 @@ export default function ParentView({
             ))}
           </ul>
         )}
-      </div>
+      </Card>
 
       {/* Defaulters list for the active section, shown below the calendar */}
-      <div className="sr-card">
-        <div className="sr-section-title">Defaulters this month</div>
+      <Card>
+        <SectionTitle>Defaulters this month</SectionTitle>
         {activeSection.defaulters.length === 0 ? (
           <div className="sr-empty">No defaulters this month — everyone in {activeSection.name} is signed up.</div>
         ) : (
@@ -120,7 +117,7 @@ export default function ParentView({
             ))}
           </ul>
         )}
-      </div>
+      </Card>
     </>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { BrandHeader } from "@/components/design-system";
 
 type LoginFormProps = {
   isInMemoryMode: boolean;
@@ -48,12 +49,7 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
 
   return (
     <>
-      <div className="sr-top">
-        <div className="sr-brand">
-          <span className="sr-brand-dot" />
-          <h1>Snack Roster</h1>
-        </div>
-      </div>
+      <BrandHeader />
 
       <h1 style={{ fontSize: "20px", fontWeight: 700, color: "var(--chalk-green-dark)", marginBottom: 16 }}>
         Sign in
