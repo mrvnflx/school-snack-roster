@@ -46,19 +46,21 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Section generation cards */}
-      {sectionStats.map((s) => (
-        <div className="sr-card" key={s.id}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <div className="sr-section-title" style={{ marginBottom: 0 }}>{s.name}</div>
-              <div className="sr-muted" style={{ fontSize: "12px" }}>
-                {s.generated ? `${s.filled} of ${s.total} slots filled` : "No schedule yet"}
+      <div className="sr-admin-section-grid">
+        {sectionStats.map((s) => (
+          <div className="sr-card" key={s.id}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <div className="sr-section-title" style={{ marginBottom: 0 }}>{s.name}</div>
+                <div className="sr-muted" style={{ fontSize: "12px" }}>
+                  {s.generated ? `${s.filled} of ${s.total} slots filled` : "No schedule yet"}
+                </div>
               </div>
+              <GenerateButton sectionId={s.id} year={year} month={month} />
             </div>
-            <GenerateButton sectionId={s.id} year={year} month={month} />
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {/* Sections management (moved to bottom — infrequent action) */}
       <SectionsForms sections={sections} />

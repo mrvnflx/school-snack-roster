@@ -142,32 +142,34 @@ export default function PrototypeDemo() {
 
       {role === "parent" ? (
         <>
-          <Card>
-            <label htmlFor="demo-parent" className="sr-label-small">
-              Signed in as
-            </label>
-            <select
-              id="demo-parent"
-              className="sr-select"
-              value={parentId}
-              onChange={(event) => {
-                const nextParentId = event.target.value;
-                const nextParent = parents.find(
-                  (parent) => parent.id === nextParentId
-                )!;
-                setParentId(nextParentId);
-                setActiveSectionId(nextParent.sections[0] ?? sections[0].id);
-                setClaimedSlots([]);
-                setCancelledSlots([]);
-              }}
-            >
-              {parents.map((parent) => (
-                <option key={parent.id} value={parent.id}>
-                  {parent.name}
-                </option>
-              ))}
-            </select>
-          </Card>
+          <div className="sr-demo-parent-controls">
+            <Card>
+              <label htmlFor="demo-parent" className="sr-label-small">
+                Signed in as
+              </label>
+              <select
+                id="demo-parent"
+                className="sr-select"
+                value={parentId}
+                onChange={(event) => {
+                  const nextParentId = event.target.value;
+                  const nextParent = parents.find(
+                    (parent) => parent.id === nextParentId
+                  )!;
+                  setParentId(nextParentId);
+                  setActiveSectionId(nextParent.sections[0] ?? sections[0].id);
+                  setClaimedSlots([]);
+                  setCancelledSlots([]);
+                }}
+              >
+                {parents.map((parent) => (
+                  <option key={parent.id} value={parent.id}>
+                    {parent.name}
+                  </option>
+                ))}
+              </select>
+            </Card>
+          </div>
 
           <Tabs
             ariaLabel="Demo sections"
@@ -181,82 +183,84 @@ export default function PrototypeDemo() {
             onSelect={setActiveSectionId}
           />
 
-          <Card>
-            <SectionTitle>{activeSection.id} — September 2026</SectionTitle>
-            {isMySection ? (
-              hasSignedUp ? (
-                <Banner tone="success">
-                  You&apos;re all set for {activeSection.id} this month.
-                </Banner>
+          <div className="sr-parent-grid">
+            <Card>
+              <SectionTitle>{activeSection.id} — September 2026</SectionTitle>
+              {isMySection ? (
+                hasSignedUp ? (
+                  <Banner tone="success">
+                    You&apos;re all set for {activeSection.id} this month.
+                  </Banner>
+                ) : (
+                  <Banner>
+                    You haven&apos;t signed up for {activeSection.id} yet — choose an open date.
+                  </Banner>
+                )
               ) : (
                 <Banner>
-                  You haven&apos;t signed up for {activeSection.id} yet — choose an open date.
+                  Read-only view — your child isn&apos;t in this section.
                 </Banner>
-              )
-            ) : (
-              <Banner>
-                Read-only view — your child isn&apos;t in this section.
-              </Banner>
-            )}
-            <ul className="sr-list">
-              {activeSection.slots.map((slot) => {
-                const key = `${activeSection.id}:${slot.date}`;
-                const claimed = claimedSlots.includes(key);
-                const cancelled = cancelledSlots.includes(key);
-                const isExistingSignup =
-                  slot.parentId === parentId && !cancelled;
-                const isMine = isExistingSignup || claimed;
-                const isFilled =
-                  (Boolean(slot.parentId) && !cancelled) || claimed;
-                const demoActions =
-                  isMySection && isMine ? (
-                    <button
-                      type="button"
-                      className="sr-btn sr-btn-secondary sr-btn-sm"
-                      onClick={() => toggleSlot(key, isExistingSignup)}
-                    >
-                      Cancel
-                    </button>
-                  ) : isMySection && !isFilled ? (
-                    <button
-                      type="button"
-                      className="sr-btn sr-btn-primary sr-btn-sm"
-                      onClick={() => toggleSlot(key, false)}
-                    >
-                      Sign up
-                    </button>
-                  ) : undefined;
-
-                return (
-                  <li key={key}>
-                    <RosterSlot
-                      date={slot.date}
-                      status={isFilled ? "filled" : "open"}
-                      childName={claimed ? "Aarav" : cancelled ? undefined : slot.childName}
-                      menuItem={claimed ? menu[0] : cancelled ? undefined : slot.menuItem}
-                      isMine={isMine}
-                      actions={demoActions}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
-          </Card>
-
-          <Card>
-            <SectionTitle>Defaulters this month</SectionTitle>
-            {activeSection.defaulters.length ? (
+              )}
               <ul className="sr-list">
-                {activeSection.defaulters.map((name) => (
-                  <li className="sr-defaulter" key={name}>
-                    {name}
-                  </li>
-                ))}
+                {activeSection.slots.map((slot) => {
+                  const key = `${activeSection.id}:${slot.date}`;
+                  const claimed = claimedSlots.includes(key);
+                  const cancelled = cancelledSlots.includes(key);
+                  const isExistingSignup =
+                    slot.parentId === parentId && !cancelled;
+                  const isMine = isExistingSignup || claimed;
+                  const isFilled =
+                    (Boolean(slot.parentId) && !cancelled) || claimed;
+                  const demoActions =
+                    isMySection && isMine ? (
+                      <button
+                        type="button"
+                        className="sr-btn sr-btn-secondary sr-btn-sm"
+                        onClick={() => toggleSlot(key, isExistingSignup)}
+                      >
+                        Cancel
+                      </button>
+                    ) : isMySection && !isFilled ? (
+                      <button
+                        type="button"
+                        className="sr-btn sr-btn-primary sr-btn-sm"
+                        onClick={() => toggleSlot(key, false)}
+                      >
+                        Sign up
+                      </button>
+                    ) : undefined;
+
+                  return (
+                    <li key={key}>
+                      <RosterSlot
+                        date={slot.date}
+                        status={isFilled ? "filled" : "open"}
+                        childName={claimed ? "Aarav" : cancelled ? undefined : slot.childName}
+                        menuItem={claimed ? menu[0] : cancelled ? undefined : slot.menuItem}
+                        isMine={isMine}
+                        actions={demoActions}
+                      />
+                    </li>
+                  );
+                })}
               </ul>
-            ) : (
-              <div className="sr-empty">Everyone is signed up.</div>
-            )}
-          </Card>
+            </Card>
+
+            <Card>
+              <SectionTitle>Defaulters this month</SectionTitle>
+              {activeSection.defaulters.length ? (
+                <ul className="sr-list">
+                  {activeSection.defaulters.map((name) => (
+                    <li className="sr-defaulter" key={name}>
+                      {name}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="sr-empty">Everyone is signed up.</div>
+              )}
+            </Card>
+          </div>
         </>
       ) : (
         <>
@@ -267,7 +271,7 @@ export default function PrototypeDemo() {
             onSelect={setActiveAdminTab}
           />
           {activeAdminTab === "overview" && (
-            <>
+            <div className="sr-admin-section-grid">
               <Card>
                 <SectionTitle>Schedule auto-generated for September 2026</SectionTitle>
                 <div className="sr-stat-row">
@@ -285,7 +289,7 @@ export default function PrototypeDemo() {
                   </p>
                 </Card>
               ))}
-            </>
+            </div>
           )}
           {activeAdminTab === "defaulters" && (
             <Card>
