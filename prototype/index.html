@@ -448,6 +448,21 @@ function renderParent(){
   });
   wrap.appendChild(listCard);
 
+  // Defaulters list for the active section, shown below the calendar (per environment).
+  const sectionDefaulters = state.parents.filter((p) => !hasSignedUp(p.id, ui.section));
+  if (sectionDefaulters.length > 0) {
+    const defCard = el('div', 'card');
+    defCard.appendChild(el('div', 'section-title', 'Defaulters this month'));
+    sectionDefaulters.forEach((p) => {
+      defCard.appendChild(
+        el('div', 'defaulter', `<span>${p.name}</span><span class="chip open">${ui.section}</span>`)
+      );
+    });
+    wrap.appendChild(defCard);
+  } else {
+    wrap.appendChild(el('div', 'empty', `No defaulters this month — everyone in ${ui.section} is signed up.`));
+  }
+
   return wrap;
 }
 
