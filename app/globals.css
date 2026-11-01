@@ -12,7 +12,7 @@
   --mustard: #E0A526;
   --coral: #DD5B4A;
   --ink: #26302A;
-  --ink-soft: #5C6960;
+  --ink-soft: #4A5850;
   --line: rgba(38, 48, 42, 0.14);
   --pin: #B23A2E;
 
@@ -133,6 +133,7 @@ h1, h2, h3, h4 {
   border-radius: 14px;
   padding: 14px;
   margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(38, 48, 42, 0.04);
 }
 
 .sr-select {
@@ -177,7 +178,10 @@ h1, h2, h3, h4 {
   flex: 0 0 auto;
   border: 1px solid var(--line);
   background: var(--paper-raise);
-  padding: 7px 13px;
+  padding: 8px 14px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
   border-radius: 999px;
   font-family: 'Work Sans', sans-serif;
   font-weight: 600;
@@ -197,13 +201,13 @@ h1, h2, h3, h4 {
 /* ============================================================ */
 
 .sr-banner {
-  background: #FCEFD9;
-  border: 1px solid #EAD7A8;
+  background: #F8E6C8;
+  border: 1px solid #DFBF80;
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 11px 14px;
   font-size: 13px;
   margin-bottom: 12px;
-  color: #7A5A16;
+  color: #59400B;
   font-weight: 500;
 }
 
@@ -326,8 +330,9 @@ h1, h2, h3, h4 {
 }
 
 .sr-btn-sm {
-  padding: 6px 9px;
-  font-size: 11.5px;
+  padding: 7px 11px;
+  min-height: 32px;
+  font-size: 12px;
 }
 
 .sr-btn-ghost {
