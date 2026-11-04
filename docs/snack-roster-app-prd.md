@@ -32,7 +32,7 @@ The process is manual, section-by-section, and month-by-month, creating recurrin
 | Role | Description |
 |---|---|
 | **Admin** | School staff who configure sections, calendars, holidays, menus, and rosters. |
-| **Parent** | Registers via email + password/magic link, signs up their assigned child for slots within their child's section. |
+| **Parent** | Registers via email + magic link only, signs up their assigned child for slots within their child's section. |
 
 ## 5. Core Concepts
 
@@ -61,7 +61,7 @@ The process is manual, section-by-section, and month-by-month, creating recurrin
 - View swap requests if needed (visibility, not approval — swaps are parent-initiated per section 6.2).
 
 ### 6.2 Parent
-- **Register/login** via email + password/magic link.
+- **Register/login** via email + magic link only.
 - View calendar(s) for each of their child(ren)'s section(s), for current/upcoming month.
 - **Full visibility across all sections'** rosters (read-only for other sections).
 - **Sign up** for an open slot in a child's section: pick a date + pick one menu item (from that section's active menu — global or override).
