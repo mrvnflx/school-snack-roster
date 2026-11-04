@@ -25,13 +25,14 @@ The process is manual, section-by-section, and month-by-month, creating recurrin
 - Payment/billing for snacks.
 - Nutrition tracking or allergy management (flag as future consideration).
 - Cross-school / multi-campus support.
+- Phone-OTP login / SMS & push notifications — commercial usage of phone numbers requires regulatory/compliance scope that exceeds MVP; to be revisited in a later version.
 
 ## 4. Users & Roles
 
 | Role | Description |
 |---|---|
 | **Admin** | School staff who configure sections, calendars, holidays, menus, and rosters. |
-| **Parent** | Registers via phone + OTP, signs up their assigned child for slots within their child's section. |
+| **Parent** | Registers via email + password/magic link, signs up their assigned child for slots within their child's section. |
 
 ## 5. Core Concepts
 
@@ -60,7 +61,7 @@ The process is manual, section-by-section, and month-by-month, creating recurrin
 - View swap requests if needed (visibility, not approval — swaps are parent-initiated per section 6.2).
 
 ### 6.2 Parent
-- **Register/login** via phone number + OTP.
+- **Register/login** via email + password/magic link.
 - View calendar(s) for each of their child(ren)'s section(s), for current/upcoming month.
 - **Full visibility across all sections'** rosters (read-only for other sections).
 - **Sign up** for an open slot in a child's section: pick a date + pick one menu item (from that section's active menu — global or override).
@@ -73,6 +74,7 @@ The process is manual, section-by-section, and month-by-month, creating recurrin
 - Receive notifications (see 6.3).
 
 ### 6.3 Notifications / Reminders
+- **Delivery channel:** email (via an email provider such as a transactional/SES-equivalent service). All reminders, pre-slot notices, and swap lifecycle emails are sent to the parent's verified email address on record.
 - **Sign-up nagging cadence** (per section, per parent-household not yet signed up for the month):
   - **Daily** reminders starting **5 days before the start of the month**, up to month start.
   - **Continue daily** for **3 days into the new month** for any **parent + section** pair still not signed up ("defaulters").
@@ -97,6 +99,7 @@ The process is manual, section-by-section, and month-by-month, creating recurrin
 | 5 | Holiday calendar | Set up once per academic year (e.g. every June) for the full year; looked up automatically each month. Ad-hoc one-off blackout days also supported. |
 | 6 | Multi-child parents | Sign-up obligation tracked at **parent + section** level (not per-child): independent obligation per section; multiple kids in the same section share one obligation. |
 | 7 | Roster import | Both CSV bulk import and in-app manual add/edit supported. |
+| 8 | Auth & notifications channel | Login and reminders use email (password/magic link). Commercial phone OTP is deferred to a later version due to regulatory/compliance scope. |
 
 ## 9. Open Questions for Refinement
 
