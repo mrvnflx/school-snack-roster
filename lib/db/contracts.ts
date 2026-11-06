@@ -82,17 +82,19 @@ export interface ReminderSettingsRepo {
   get(): Promise<ReminderSettings | null>;
 }
 
-/** Profiles: get by id/phone, list all, create, update role */
+/** Profiles: get by id/phone/email, list all, create, update role */
 export interface ProfilesRepo {
   getById(id: string): Promise<Profile | null>;
   getByPhone(phone: string): Promise<Profile | null>;
+  getByEmail?(email: string): Promise<Profile | null>;
   listAll(): Promise<Profile[]>;
   create(id: string, phone: string, fullName?: string): Promise<void>;
+  createWithEmail?(email: string, fullName?: string, role?: 'admin' | 'parent'): Promise<Profile>;
   updateRole(id: string, role: 'admin' | 'parent'): Promise<void>;
 }
 
 /** Auth: get current user (from Supabase or mock cookie) */
 export interface AuthRepo {
   /** Returns null if not authenticated */
-  getUser(): Promise<{ id: string; phone?: string; role?: string; fullName?: string } | null>;
+  getUser(): Promise<{ id: string; phone?: string; role?: string; fullName?: string; email?: string } | null>;
 }

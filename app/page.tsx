@@ -74,7 +74,7 @@ export default async function Home() {
     <>
       <BrandHeader
         actions={
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {profile?.role === "admin" && (
               <Link href="/admin" className="sr-btn-ghost">
                 Admin
@@ -83,12 +83,15 @@ export default async function Home() {
             <Link href="/proto" className="sr-btn-ghost">
               Proto
             </Link>
+            <Link href="/logout" className="sr-btn-ghost" style={{ color: "var(--coral)" }}>
+              Sign out
+            </Link>
           </div>
         }
       />
 
       <p className="sr-muted" style={{ marginBottom: 14 }}>
-        {profile?.fullName || user!.phone} — pick a section to view its calendar.
+        {profile?.fullName || profile?.email || user!.email || user!.phone} ({profile?.role}) — pick a section to view its calendar.
       </p>
 
       <ParentView

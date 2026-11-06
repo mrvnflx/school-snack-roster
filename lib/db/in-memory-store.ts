@@ -17,11 +17,11 @@ const sections: Section[] = [
 ];
 
 const profiles: Profile[] = [
-  { id: uid(), role: 'admin', fullName: 'Admin User', phone: '+919876543210', createdAt: new Date().toISOString() },
-  { id: uid(), role: 'parent', fullName: 'Priya Nair', phone: '+919876543211', createdAt: new Date().toISOString() },
-  { id: uid(), role: 'parent', fullName: 'Rahul Mehta', phone: '+919876543212', createdAt: new Date().toISOString() },
-  { id: uid(), role: 'parent', fullName: 'Sara Khan', phone: '+919876543213', createdAt: new Date().toISOString() },
-  { id: uid(), role: 'parent', fullName: 'Tom Fischer', phone: '+919876543214', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'admin', fullName: 'Admin User', phone: '+919****3210', email: 'admin@example.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'parent', fullName: 'Priya Nair', phone: '+919****3211', email: 'priya@example.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'parent', fullName: 'Rahul Mehta', phone: '+919****3212', email: 'rahul@example.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'parent', fullName: 'Sara Khan', phone: '+919****3213', email: 'sara@example.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'parent', fullName: 'Tom Fischer', phone: '+919****3214', email: 'tom@example.com', createdAt: new Date().toISOString() },
 ];
 
 const children: Child[] = [
@@ -150,6 +150,10 @@ export function findSectionById(id: string) {
 
 export function findProfileByPhone(phone: string) {
   return profiles.find(p => p.phone === phone);
+}
+
+export function findProfileByEmail(email: string) {
+  return profiles.find(p => p.email?.toLowerCase() === email.toLowerCase());
 }
 
 export function findMenuBySectionId(sectionId: string | null) {
