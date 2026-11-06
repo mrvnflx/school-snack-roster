@@ -8,6 +8,7 @@ export interface Profile {
   role: UserRole;
   fullName: string | null;
   phone: string | null;
+  email?: string | null;
   createdAt: string;
 }
 

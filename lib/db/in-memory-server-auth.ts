@@ -1,19 +1,34 @@
 import type { AuthRepo } from './contracts';
-import { store } from './in-memory-store';
+import { store, findProfileByEmail } from './in-memory-store';
+import { cookies } from 'next/headers';
 
 /** In-memory server auth for the in-memory mock mode.
- *  Returns the first admin profile from seed data so the app works
- *  without any real auth flow. The login page is a formality. */
+ *  Reads the mock email cookie `sr-mock-email` and returns the matching user profile.
+ *  Falls back to admin if no session is active. */
 export const inMemoryServerAuth: AuthRepo = {
   async getUser() {
     store.ensureSeeded();
-    const admin = store.profiles.find((p) => p.role === 'admin');
-    if (!admin) return null;
+    const cookieStore = await cookies();
+    const emailCookie = cookieStore.get('sr-mock-email')?.value;
+
+    let profile = null;
+    if (emailCookie) {
+      profile = findProfileByEmail(emailCookie);
+    }
+
+    if (!profile) {
+      // Fallback to admin so initial visit works out of the box
+      profile = store.profiles.find((p) => p.role === 'admin');
+    }
+
+    if (!profile) return null;
+
     return {
-      id: admin.id,
-      phone: admin.phone ?? undefined,
-      role: admin.role,
-      fullName: admin.fullName ?? undefined,
+      id: profile.id,
+      phone: profile.phone ?? undefined,
+      role: profile.role,
+      fullName: profile.fullName ?? undefined,
+      email: profile.email ?? undefined,
     };
   },
 };

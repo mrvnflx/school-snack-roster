@@ -15,6 +15,7 @@ export const supabaseAuth: AuthRepo = {
     return {
       id: user.id,
       phone: user.phone,
+      email: user.email,
       role: profile?.role,
       fullName: profile?.full_name,
     };
