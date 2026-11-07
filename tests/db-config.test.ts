@@ -19,37 +19,21 @@ function setEnv(env: Record<string, string | undefined>) {
 }
 
 describe("useInMemoryDb", () => {
-  test("preview deployments always use in-memory mock auth, even when project env sets supabase mode (Vercel previews inherit production env)", () => {
+  test("mock mode stays on even when env selects supabase mode (otherwise the valid mock session cookie is ignored and /admin bounces to /login)", () => {
     setEnv({
-      VERCEL_ENV: "preview",
+      VERCEL_ENV: "production",
       USE_IN_MEMORY_DB: "false",
       NEXT_PUBLIC_DB_MODE: "supabase",
     });
     expect(useInMemoryDb()).toBe(true);
   });
 
-  test("local development always uses in-memory mock auth, even in supabase mode", () => {
-    setEnv({
-      VERCEL_ENV: "development",
-      NEXT_PUBLIC_DB_MODE: "supabase",
-    });
+  test("mock mode stays on in preview deployments", () => {
+    setEnv({ VERCEL_ENV: "preview", NEXT_PUBLIC_DB_MODE: "supabase" });
     expect(useInMemoryDb()).toBe(true);
   });
 
-  test("production keeps explicitly configured supabase mode", () => {
-    setEnv({
-      VERCEL_ENV: "production",
-      NEXT_PUBLIC_DB_MODE: "supabase",
-    });
-    expect(useInMemoryDb()).toBe(false);
-  });
-
-  test("explicit in-memory mode wins outside preview/development", () => {
-    setEnv({ VERCEL_ENV: "production", NEXT_PUBLIC_DB_MODE: "in-memory" });
-    expect(useInMemoryDb()).toBe(true);
-  });
-
-  test("defaults to in-memory mock mode when nothing is configured", () => {
+  test("mock mode stays on with no env configured", () => {
     setEnv({});
     expect(useInMemoryDb()).toBe(true);
   });
