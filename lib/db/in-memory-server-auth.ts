@@ -17,8 +17,7 @@ export const inMemoryServerAuth: AuthRepo = {
     }
 
     if (!profile) {
-      // Fallback to admin so initial visit works out of the box
-      profile = store.profiles.find((p) => p.role === 'admin');
+      return null;
     }
 
     if (!profile) return null;

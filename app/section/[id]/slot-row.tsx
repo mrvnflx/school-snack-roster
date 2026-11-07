@@ -106,7 +106,7 @@ export default function SlotRow({
       actions={actions}
     >
       {open && slot.status === "open" && (
-        <div className="sr-row">
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
           <select
             value={childId}
             onChange={(e) => setChildId(e.target.value)}
