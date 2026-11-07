@@ -85,9 +85,11 @@ export default async function Home() {
             <Link href="/proto" className="sr-btn-ghost">
               Proto
             </Link>
-            <Link href="/logout" className="sr-btn-ghost" style={{ color: "var(--coral)" }}>
-              Sign out
-            </Link>
+            <form action="/logout" method="POST" style={{ margin: 0 }}>
+              <button type="submit" className="sr-btn-ghost" style={{ color: "var(--coral)", background: "none", border: "none", cursor: "pointer", font: "inherit" }}>
+                Sign out
+              </button>
+            </form>
           </div>
         }
       />
