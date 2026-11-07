@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import RegisterSW from "./register-sw";
 
 export const metadata: Metadata = {
   title: "Snack Roster",
@@ -27,7 +26,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <div className="sr-app">
           {children}
         </div>
-        <RegisterSW />
       </body>
     </html>
   );

@@ -35,8 +35,11 @@ async function waitForServer(timeoutMs = 110_000): Promise<void> {
   throw new Error(`dev server at ${BASE} did not become ready in time`);
 }
 
-async function fetchHtml(path: string): Promise<string> {
-  const res = await fetch(`${BASE}${path}`);
+async function fetchHtml(path: string, cookie = "sr-mock-session=admin@example.com"): Promise<string> {
+  const res = await fetch(`${BASE}${path}`, {
+    headers: { Cookie: cookie },
+    redirect: "follow",
+  });
   if (!res.ok) throw new Error(`GET ${path} failed -> ${res.status}`);
   return res.text();
 }
@@ -110,4 +113,30 @@ test("/proto renders the interactive demo using shared app components", async ()
   expect(html).toContain("Demo role");
   expect(html).toContain("sr-card");
   expect(html).toContain("September 2026");
+});
+
+test("unauthenticated access to homepage redirects to mock login screen", async () => {
+  const res = await fetch(`${BASE}/`, { redirect: "manual" });
+  expect(res.status).toBe(307);
+  expect(res.headers.get("location")).toContain("/login");
+});
+
+test("admin login and access to /admin dashboard succeeds", async () => {
+  const loginRes = await fetch(`${BASE}/login/form`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "email=admin%40example.com",
+    redirect: "manual",
+  });
+  expect(loginRes.status).toBe(303);
+
+  // The mock session cookie is set client-side by the login form (JS),
+  // so the test presents it the way the browser would after login.
+  const adminRes = await fetch(`${BASE}/admin`, {
+    headers: { Cookie: "sr-mock-session=admin%40example.com" },
+    redirect: "manual",
+  });
+  expect(adminRes.status).toBe(200);
+  const html = await adminRes.text();
+  expect(html).toContain("Schedule auto-generated");
 });

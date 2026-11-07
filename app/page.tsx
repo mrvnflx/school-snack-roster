@@ -4,6 +4,7 @@ import type { Child } from "@/lib/slot-utils";
 import type { SlotWithDetails } from "@/lib/db/types";
 import ParentView from "@/app/parent-view";
 import { BrandHeader } from "@/components/design-system";
+import SessionCookieSync from "@/components/session-cookie-sync";
 
 export default async function Home() {
   const { db, user, profile } = await requireUser();
@@ -72,20 +73,23 @@ export default async function Home() {
 
   return (
     <>
+      <SessionCookieSync email={profile?.email ?? user!.email ?? ""} />
       <BrandHeader
         actions={
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {profile?.role === "admin" && (
-              <Link href="/admin" className="sr-btn-ghost">
+              <Link href="/admin" prefetch={false} className="sr-btn-ghost">
                 Admin
               </Link>
             )}
             <Link href="/proto" className="sr-btn-ghost">
               Proto
             </Link>
-            <Link href="/logout" className="sr-btn-ghost" style={{ color: "var(--coral)" }}>
-              Sign out
-            </Link>
+            <form action="/logout" method="POST" style={{ margin: 0 }}>
+              <button type="submit" className="sr-btn-ghost" style={{ color: "var(--coral)", background: "none", border: "none", cursor: "pointer", font: "inherit" }}>
+                Sign out
+              </button>
+            </form>
           </div>
         }
       />

@@ -1,24 +1,21 @@
-const CACHE = "snack-roster-v1";
-
-self.addEventListener("install", (event) => {
+// Self-destructing service worker.
+//
+// Previous versions of this SW cached every GET response, including
+// session-specific RSC payloads. A logged-out render of /admin encodes a
+// NEXT_REDIRECT to /login, and replaying that cached payload on
+// navigation logged authenticated admins out. This worker deletes all
+// caches and unregisters itself so no service worker controls the app.
+// It has no fetch handler, so it never intercepts requests.
+self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
-});
-
-// Network-first, falling back to cache — keeps data fresh (sign-ups matter)
-// while still giving something offline for repeat visits.
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
-  event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-        return response;
-      })
-      .catch(() => caches.match(event.request))
+  event.waitUntil(
+    caches
+      .keys()
+      .then((names) => Promise.all(names.map((name) => caches.delete(name))))
+      .then(() => self.registration.unregister())
+      .then(() => self.clients.claim())
   );
 });
