@@ -21,9 +21,20 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Sets the mock session cookie client-side. It is deliberately not set
+  // via Set-Cookie by the login route: server-set cookies are omitted by
+  // some browsers on App Router soft-navigation fetches while being sent
+  // on document navigations, which bounces authenticated users from
+  // /admin back to /login. A JS-set cookie rides along on fetches.
+  // It only carries a demo email address.
+  function setMockSessionCookie(value: string) {
+    document.cookie = `sr-mock-session=${encodeURIComponent(value)}; Path=/; SameSite=Lax; Max-Age=${60 * 60 * 24 * 7}`;
+  }
+
   function handleSelectDemo(demoEmail: string) {
     setEmail(demoEmail);
     setSelectedDemo(demoEmail);
+    setMockSessionCookie(demoEmail);
     setLoading(true);
     // Automatically submit form on demo persona click for 1-click instant login
     setTimeout(() => {
@@ -101,7 +112,7 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
 
       {/* Email Login Form */}
       <div className="sr-card">
-        <form ref={formRef} action="/login/form" method="POST" onSubmit={() => setLoading(true)}>
+        <form ref={formRef} action="/login/form" method="POST" onSubmit={() => { setMockSessionCookie(email); setLoading(true); }}>
           <label className="sr-label-small" htmlFor="email-input">
             Email Address
           </label>

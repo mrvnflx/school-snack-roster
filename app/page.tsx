@@ -4,6 +4,7 @@ import type { Child } from "@/lib/slot-utils";
 import type { SlotWithDetails } from "@/lib/db/types";
 import ParentView from "@/app/parent-view";
 import { BrandHeader } from "@/components/design-system";
+import SessionCookieSync from "@/components/session-cookie-sync";
 
 export default async function Home() {
   const { db, user, profile } = await requireUser();
@@ -72,6 +73,7 @@ export default async function Home() {
 
   return (
     <>
+      <SessionCookieSync email={profile?.email ?? user!.email ?? ""} />
       <BrandHeader
         actions={
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>

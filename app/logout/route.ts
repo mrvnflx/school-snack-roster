@@ -3,6 +3,6 @@ import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
   const cookieStore = await cookies();
-  cookieStore.delete("sr-mock-email");
+  cookieStore.delete("sr-mock-session");
   return NextResponse.redirect(new URL("/login", request.url), { status: 303 });
 }

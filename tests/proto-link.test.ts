@@ -35,7 +35,7 @@ async function waitForServer(timeoutMs = 110_000): Promise<void> {
   throw new Error(`dev server at ${BASE} did not become ready in time`);
 }
 
-async function fetchHtml(path: string, cookie = "sr-mock-email=admin@example.com"): Promise<string> {
+async function fetchHtml(path: string, cookie = "sr-mock-session=admin@example.com"): Promise<string> {
   const res = await fetch(`${BASE}${path}`, {
     headers: { Cookie: cookie },
     redirect: "follow",
@@ -128,11 +128,12 @@ test("admin login and access to /admin dashboard succeeds", async () => {
     body: "email=admin%40example.com",
     redirect: "manual",
   });
-  const setCookie = loginRes.headers.get("set-cookie") || "";
-  expect(setCookie).toContain("sr-mock-email");
+  expect(loginRes.status).toBe(303);
 
+  // The mock session cookie is set client-side by the login form (JS),
+  // so the test presents it the way the browser would after login.
   const adminRes = await fetch(`${BASE}/admin`, {
-    headers: { Cookie: setCookie },
+    headers: { Cookie: "sr-mock-session=admin%40example.com" },
     redirect: "manual",
   });
   expect(adminRes.status).toBe(200);

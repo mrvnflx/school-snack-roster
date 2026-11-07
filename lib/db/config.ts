@@ -1,7 +1,7 @@
 /** Returns true if in-memory mock mode is enabled.
  *
  *  This MVP's only working login is the mock email flow: the login route
- *  sets the `sr-mock-email` cookie and only the in-memory auth recognizes
+ *  sets the `sr-mock-session` cookie and only the in-memory auth recognizes
  *  it. In Supabase mode that cookie is set but ignored, so every guarded
  *  page (`/` and `/admin` included) bounces back to /login even though
  *  the mock session is valid. There is no real Supabase magic-link flow

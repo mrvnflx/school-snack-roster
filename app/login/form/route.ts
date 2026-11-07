@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -16,21 +15,10 @@ export async function POST(request: Request) {
     await db.profiles.createWithEmail(email);
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set("sr-mock-email", email, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-  });
-
-  const response = NextResponse.redirect(new URL("/", request.url), { status: 303 });
-  response.cookies.set("sr-mock-email", email, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-  });
-
-  return response;
+  // The mock session cookie is set client-side by the login form (see
+  // LoginForm.setMockSessionCookie). It is deliberately not set here via
+  // Set-Cookie: server-set cookies are omitted by some browsers on App
+  // Router soft-navigation fetches (while sent on document navigations),
+  // which bounces authenticated users from /admin back to /login.
+  return NextResponse.redirect(new URL("/", request.url), { status: 303 });
 }

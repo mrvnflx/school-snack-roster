@@ -3,12 +3,12 @@ import { store, findProfileByEmail } from './in-memory-store';
 import { cookies } from 'next/headers';
 
 /** In-memory server auth for the in-memory mock mode.
- *  Reads the mock email cookie `sr-mock-email` and returns the matching user profile. */
+ *  Reads the mock email cookie `sr-mock-session` and returns the matching user profile. */
 export const inMemoryServerAuth: AuthRepo = {
   async getUser() {
     store.ensureSeeded();
     const cookieStore = await cookies();
-    const rawEmail = cookieStore.get('sr-mock-email')?.value;
+    const rawEmail = cookieStore.get('sr-mock-session')?.value;
     const emailCookie = rawEmail ? decodeURIComponent(rawEmail).trim() : null;
 
     if (!emailCookie) {
