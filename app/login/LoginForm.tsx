@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { BrandHeader } from "@/components/design-system";
 
 type LoginFormProps = {
@@ -19,10 +19,16 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [selectedDemo, setSelectedDemo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   function handleSelectDemo(demoEmail: string) {
     setEmail(demoEmail);
     setSelectedDemo(demoEmail);
+    setLoading(true);
+    // Automatically submit form on demo persona click for 1-click instant login
+    setTimeout(() => {
+      formRef.current?.submit();
+    }, 50);
   }
 
   return (
@@ -39,7 +45,7 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
       {/* Demo Accounts Quick Picker */}
       <div className="sr-card" style={{ marginBottom: 20 }}>
         <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--chalk-green-dark)", marginBottom: 12 }}>
-          Quick Demo Personas
+          Quick Demo Personas (1-Click Login)
         </h3>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {DEMO_ACCOUNTS.map((acc) => {
@@ -49,13 +55,14 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
                 key={acc.email}
                 type="button"
                 onClick={() => handleSelectDemo(acc.email)}
+                disabled={loading}
                 style={{
                   textAlign: "left",
                   padding: "10px 12px",
                   borderRadius: "10px",
                   border: isSelected ? "2px solid var(--chalk-green)" : "1px solid var(--border)",
                   background: isSelected ? "#F4F8F3" : "#FAFAFA",
-                  cursor: "pointer",
+                  cursor: loading ? "wait" : "pointer",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -94,7 +101,7 @@ export default function LoginForm({ isInMemoryMode }: LoginFormProps) {
 
       {/* Email Login Form */}
       <div className="sr-card">
-        <form action="/login/form" method="POST" onSubmit={() => setLoading(true)}>
+        <form ref={formRef} action="/login/form" method="POST" onSubmit={() => setLoading(true)}>
           <label className="sr-label-small" htmlFor="email-input">
             Email Address
           </label>

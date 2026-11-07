@@ -24,5 +24,13 @@ export async function POST(request: Request) {
     maxAge: 60 * 60 * 24 * 7, // 7 days
   });
 
-  return NextResponse.redirect(new URL("/", request.url), { status: 303 });
+  const response = NextResponse.redirect(new URL("/", request.url), { status: 303 });
+  response.cookies.set("sr-mock-email", email, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+  });
+
+  return response;
 }
