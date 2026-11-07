@@ -76,7 +76,7 @@ export default async function Home() {
         actions={
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {profile?.role === "admin" && (
-              <Link href="/admin" className="sr-btn-ghost">
+              <Link href="/admin" prefetch={false} className="sr-btn-ghost">
                 Admin
               </Link>
             )}
