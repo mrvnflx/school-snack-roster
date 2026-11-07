@@ -120,3 +120,22 @@ test("unauthenticated access to homepage redirects to mock login screen", async 
   expect(res.status).toBe(307);
   expect(res.headers.get("location")).toContain("/login");
 });
+
+test("admin login and access to /admin dashboard succeeds", async () => {
+  const loginRes = await fetch(`${BASE}/login/form`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "email=admin%40example.com",
+    redirect: "manual",
+  });
+  const setCookie = loginRes.headers.get("set-cookie") || "";
+  expect(setCookie).toContain("sr-mock-email");
+
+  const adminRes = await fetch(`${BASE}/admin`, {
+    headers: { Cookie: setCookie },
+    redirect: "manual",
+  });
+  expect(adminRes.status).toBe(200);
+  const html = await adminRes.text();
+  expect(html).toContain("Schedule auto-generated");
+});
