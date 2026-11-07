@@ -147,7 +147,11 @@ export function RosterSlot({
             <span className="sr-chip sr-chip-open">Open</span>
           ))}
       </div>
-      {children}
+      {children && (
+        <div style={{ gridColumn: "1 / -1" }}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }
