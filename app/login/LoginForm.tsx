@@ -9,11 +9,11 @@ type LoginFormProps = {
 };
 
 const DEMO_ACCOUNTS = [
-  { name: "Admin User", email: "admin@example.com", role: "admin", desc: "Full access (admin dashboard, menus, schedules)" },
-  { name: "Priya Nair", email: "priya@example.com", role: "parent", desc: "Parent of Aarav & Diya (Env-1)" },
-  { name: "Rahul Mehta", email: "rahul@example.com", role: "parent", desc: "Parent of Kabir (Elementary)" },
-  { name: "Sara Khan", email: "sara@example.com", role: "parent", desc: "Parent of Zoya & Imran" },
-  { name: "Tom Fischer", email: "tom@example.com", role: "parent", desc: "Parent of Leo (Env-1)" },
+  { name: "Admin User", email: "admin.overvalue221@simplelogin.com", role: "admin", desc: "Full access (admin dashboard, menus, schedules)" },
+  { name: "Priya Nair", email: "priya.mothball360@simplelogin.com", role: "parent", desc: "Parent of Aarav & Diya (Env-1)" },
+  { name: "Rahul Mehta", email: "rahul.caramel251@simplelogin.com", role: "parent", desc: "Parent of Kabir (Elementary)" },
+  { name: "Sara Khan", email: "sara.jam145@simplelogin.com", role: "parent", desc: "Parent of Zoya & Imran" },
+  { name: "Tom Fischer", email: "tom.estimator509@simplelogin.com", role: "parent", desc: "Parent of Leo (Env-1)" },
 ];
 
 function LoginContent({ isInMemoryMode }: LoginFormProps) {

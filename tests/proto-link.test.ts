@@ -35,7 +35,7 @@ async function waitForServer(timeoutMs = 110_000): Promise<void> {
   throw new Error(`dev server at ${BASE} did not become ready in time`);
 }
 
-async function fetchHtml(path: string, cookie = "sr-mock-session=admin@example.com"): Promise<string> {
+async function fetchHtml(path: string, cookie = "sr-mock-session=admin.overvalue221@simplelogin.com"): Promise<string> {
   const res = await fetch(`${BASE}${path}`, {
     headers: { Cookie: cookie },
     redirect: "follow",

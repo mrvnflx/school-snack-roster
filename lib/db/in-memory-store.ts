@@ -17,11 +17,11 @@ const sections: Section[] = [
 ];
 
 const profiles: Profile[] = [
-  { id: uid(), role: 'admin', fullName: 'Admin User', phone: '+919****3210', email: 'admin@example.com', createdAt: new Date().toISOString() },
-  { id: uid(), role: 'parent', fullName: 'Priya Nair', phone: '+919****3211', email: 'priya@example.com', createdAt: new Date().toISOString() },
-  { id: uid(), role: 'parent', fullName: 'Rahul Mehta', phone: '+919****3212', email: 'rahul@example.com', createdAt: new Date().toISOString() },
-  { id: uid(), role: 'parent', fullName: 'Sara Khan', phone: '+919****3213', email: 'sara@example.com', createdAt: new Date().toISOString() },
-  { id: uid(), role: 'parent', fullName: 'Tom Fischer', phone: '+919****3214', email: 'tom@example.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'admin', fullName: 'Admin User', phone: '+919****3210', email: 'admin.overvalue221@simplelogin.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'parent', fullName: 'Priya Nair', phone: '+919****3211', email: 'priya.mothball360@simplelogin.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'parent', fullName: 'Rahul Mehta', phone: '+919****3212', email: 'rahul.caramel251@simplelogin.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'parent', fullName: 'Sara Khan', phone: '+919****3213', email: 'sara.jam145@simplelogin.com', createdAt: new Date().toISOString() },
+  { id: uid(), role: 'parent', fullName: 'Tom Fischer', phone: '+919****3214', email: 'tom.estimator509@simplelogin.com', createdAt: new Date().toISOString() },
 ];
 
 const children: Child[] = [
